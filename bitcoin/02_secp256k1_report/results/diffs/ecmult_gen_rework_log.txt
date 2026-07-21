@@ -1,0 +1,70 @@
+e3a885d Merge bitcoin-core/secp256k1#1522: release: prepare for 0.5.0
+c0e4ec3 release: prepare for 0.5.0
+bb528cf Merge bitcoin-core/secp256k1#1518: Add secp256k1_pubkey_sort
+7d2591c Add secp256k1_pubkey_sort
+da51507 Merge bitcoin-core/secp256k1#1058: Signed-digit multi-comb ecmult_gen algorithm
+4c341f8 Add changelog entry for SDMC
+a043940 Permit COMB_BITS < 256 for exhaustive tests
+39b2f2a Add test case for ecmult_gen recoded = {-1,0,1}
+644e86d Reintroduce projective blinding
+07810d9 Reduce side channels from single-bit reads
+a0d32b5 Optimization: use Nx32 representation for recoded bits
+e03dcc4 Make secp256k1_scalar_get_bits support 32-bit reads
+5005abe Rename scalar_get_bits -> scalar_get_bits_limb32; return uint32_t
+6247f48 Optimization: avoid unnecessary doublings in precomputation
+15d0cca Optimization: first table lookup needs no point addition
+7a33db3 Optimization: move (2^COMB_BITS-1)/2 term into ctx->scalar_offset
+ed2a056 Provide 3 configurations accessible through ./configure
+5f7be9f Always generate tables for current (blocks,teeth) config
+fde1dfc Signed-digit multi-comb ecmult_gen algorithm
+486518b Make exhaustive tests's scalar_inverse(&x,&x) work
+ab45c3e Initial gej blinding -> final ge blinding
+aa00a6b Introduce CEIL_DIV macro and use it
+d831168 Merge bitcoin-core/secp256k1#1515: ci: Note affected clangs in comment on ASLR quirk
+a85e223 ci: Note affected clangs in comment on ASLR quirk
+4b77fec Merge bitcoin-core/secp256k1#1512: msan: notate more variable assignments from assembly code
+f7f0184 msan: notate more variable assignments from assembly code
+a613391 change inconsistent array param to pointer
+05bfab6 Merge bitcoin-core/secp256k1#1507: ci: Add workaround for ASLR bug in sanitizers
+a5e8ab2 ci: Add sanitizer env variables to debug output
+84a93de ci: Add workaround for ASLR bug in sanitizers
+427e86b Merge bitcoin-core/secp256k1#1490: tests: improve fe_sqr test (issue #1472)
+2028069 doc: clarify input requirements for secp256k1_fe_mul
+11420a7 tests: improve fe_sqr test
+cdc9a62 Merge bitcoin-core/secp256k1#1489: tests: add missing fe comparison checks for inverse field test cases
+d926510 Merge bitcoin-core/secp256k1#1496: msan: notate variable assignments from assembly code
+31ba404 msan: notate variable assignments from assembly code
+e7ea32e msan: Add SECP256K1_CHECKMEM_MSAN_DEFINE which applies to memory sanitizer and not valgrind
+e7bdddd refactor: rename `check_fe_equal` -> `fe_equal`
+00111c9 tests: add missing fe comparison checks for inverse field test cases
+0653a25 Merge bitcoin-core/secp256k1#1486: ci: Update cache action
+94a14d5 ci: Update cache action
+2483627 Merge bitcoin-core/secp256k1#1483: cmake: Recommend native CMake commands in README
+5ad3aa3 Merge bitcoin-core/secp256k1#1484: tests: Drop redundant _scalar_check_overflow calls
+51df2d9 tests: Drop redundant _scalar_check_overflow calls
+3777e3f cmake: Recommend native CMake commands in README
+e4af41c Merge bitcoin-core/secp256k1#1249: cmake: Add `SECP256K1_LATE_CFLAGS` configure option
+3bf4d68 Merge bitcoin-core/secp256k1#1482: build: Clean up handling of module dependencies
+e682267 build: Error if required module explicitly off
+89ec583 build: Clean up handling of module dependencies
+4437886 Merge bitcoin-core/secp256k1#1468: v0.4.1 release aftermath
+a9db9f2 Merge bitcoin-core/secp256k1#1480: Get rid of untested sizeof(secp256k1_ge_storage) == 64 code path
+74b7c3b Merge bitcoin-core/secp256k1#1476: include: make docs more consistent
+b37fdb2 check-abi: Minor UI improvements
+ad5f589 check-abi: Default to HEAD for new version
+9fb7e2f release process: Style and formatting nits
+ba5d72d assumptions: Use new STATIC_ASSERT macro
+e53c2d9 Require that sizeof(secp256k1_ge_storage) == 64
+d0ba2ab util: Add STATIC_ASSERT macro
+da7bc1b include: in doc, remove article in front of "pointer"
+aa3dd52 include: make doc about ctx more consistent
+e3f6900 include: remove obvious "cannot be NULL" doc
+d373bf6 Merge bitcoin-core/secp256k1#1474: tests: restore scalar_mul test
+79e0945 Merge bitcoin-core/secp256k1#1473: Fix typos
+3dbfb48 tests: restore scalar_mul test
+d77170a Fix typos
+e7053d0 release process: Add email step
+429d21d release process: Run sanity checks on release PR
+efe85c7 Merge bitcoin-core/secp256k1#1466: release cleanup: bump version after 0.4.1
+4b2e06f release cleanup: bump version after 0.4.1
+42f8c51 cmake: Add `SECP256K1_LATE_CFLAGS` configure option

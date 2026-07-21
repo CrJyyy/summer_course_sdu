@@ -1,0 +1,34 @@
+[
+  {
+    "tag": "v0.4.1",
+    "variant": "default",
+    "ecmult_gen_table_kib": "version default",
+    "library_artifact": "work/builds/v0.4.1-default/src/libsecp256k1.2.dylib",
+    "library_bytes": 1336120,
+    "library_kib": 1304.8047
+  },
+  {
+    "tag": "v0.5.0",
+    "variant": "table2k",
+    "ecmult_gen_table_kib": 2,
+    "library_artifact": "work/builds/v0.5.0-table2k/src/libsecp256k1.2.dylib",
+    "library_bytes": 1270344,
+    "library_kib": 1240.5703
+  },
+  {
+    "tag": "v0.5.0",
+    "variant": "table22k",
+    "ecmult_gen_table_kib": 22,
+    "library_artifact": "work/builds/v0.5.0-table22k/src/libsecp256k1.2.dylib",
+    "library_bytes": 1286856,
+    "library_kib": 1256.6953
+  },
+  {
+    "tag": "v0.5.0",
+    "variant": "table86k",
+    "ecmult_gen_table_kib": 86,
+    "library_artifact": "work/builds/v0.5.0-table86k/src/libsecp256k1.2.dylib",
+    "library_bytes": 1352904,
+    "library_kib": 1321.1953
+  }
+]

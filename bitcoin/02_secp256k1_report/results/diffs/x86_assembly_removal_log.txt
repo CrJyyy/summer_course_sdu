@@ -1,0 +1,72 @@
+1ad5185 Merge bitcoin-core/secp256k1#1465: release: prepare for 0.4.1
+672053d release: prepare for 0.4.1
+1a81df8 Merge bitcoin-core/secp256k1#1380: Add ABI checking tool for release process
+74a4d97 doc: Add ABI checking with `check-abi.sh` to the Release Process
+e7f830e Add `tools/check-abi.sh`
+77af1da Merge bitcoin-core/secp256k1#1455: doc: improve secp256k1_fe_set_b32_mod doc
+3928b7c doc: improve secp256k1_fe_set_b32_mod doc
+5e9a4d7 Merge bitcoin-core/secp256k1#990: Add comment on length checks when parsing ECDSA sigs
+4197d66 Merge bitcoin-core/secp256k1#1431: Add CONTRIBUTING.md
+0e5ea62 CONTRIBUTING: add some coding and style conventions
+e2c9888 Merge bitcoin-core/secp256k1#1451: changelog: add entry for "field: Remove x86_64 asm"
+d2e36a2 changelog: add entry for "field: Remove x86_64 asm"
+1a432cb README: update first sentence
+0922a04 docs: move coverage report instructions to CONTRIBUTING
+76880e4 Add CONTRIBUTING.md including scope and guidelines for new code
+d3e29db Merge bitcoin-core/secp256k1#1450: Add group.h ge/gej equality functions
+04af0ba Replace ge_equals_ge[,j] calls with group.h equality calls
+60525f6 Add unit tests for group.h equality functions
+a47cd97 Add group.h ge/gej equality functions
+10e6d29 Merge bitcoin-core/secp256k1#1446: field: Remove x86_64 asm
+07687e8 Merge bitcoin-core/secp256k1#1393: Implement new policy for VERIFY_CHECK and #ifdef VERIFY (issue #1381)
+bb46723 remove VERIFY_SETUP define
+a3a3e11 remove unneeded VERIFY_SETUP uses in ECMULT_CONST_TABLE_GET_GE macro
+a0fb68a introduce and use SECP256K1_SCALAR_VERIFY macro
+cf25c86 introduce and use SECP256K1_{FE,GE,GEJ}_VERIFY macros
+5d89bc0 remove superfluous `#ifdef VERIFY`/`#endif` preprocessor conditions
+c2688f8 redefine VERIFY_CHECK to empty in production (non-VERIFY) mode
+5814d84 Merge bitcoin-core/secp256k1#1438: correct assertion for secp256k1_fe_mul_inner
+c1b4966 Merge bitcoin-core/secp256k1#1445: bench: add --help option to bench_internal
+f07cead build: Don't call assembly an optimization
+2f0762f field: Remove x86_64 asm
+1ddd76a bench: add --help option to bench_internal
+e721039 Merge bitcoin-core/secp256k1#1441: asm: add .note.GNU-stack section for non-exec stack
+ea47c82 Merge bitcoin-core/secp256k1#1442: Return temporaries to being unsigned in secp256k1_fe_sqr_inner
+dcdda31 Tighten secp256k1_fe_mul_inner's VERIFY_BITS checks
+1027135 Return temporaries to being unsigned in secp256k1_fe_sqr_inner
+33dc7e4 asm: add .note.GNU-stack section for non-exec stack
+c891c5c Merge bitcoin-core/secp256k1#1437: ci: Ignore internal errors of snapshot compilers
+8185e72 ci: Ignore internal errors in snapshot compilers
+40f50d0 Merge bitcoin-core/secp256k1#1184: Signed-digit based ecmult_const algorithm
+8e2a5fe correct assertion for secp256k1_fe_mul_inner
+355bbdf Add changelog entry for signed-digit ecmult_const algorithm
+21f49d9 Remove unused secp256k1_scalar_shr_int
+115fdc7 Remove unused secp256k1_wnaf_const
+aa9f3a3 ecmult_const: add/improve tests
+4d16e90 Signed-digit based ecmult_const algorithm
+ba523be make SECP256K1_SCALAR_CONST reduce modulo exhaustive group order
+2140da9 Add secp256k1_scalar_half for halving scalars (+ tests/benchmarks).
+1f1bb78 Merge bitcoin-core/secp256k1#1430: README: remove CI badge
+5dab0ba README: remove CI badge
+b314cf2 Merge bitcoin-core/secp256k1#1426: ci/cirrus: Add native ARM64 jobs
+fa4d6c7 ci/cirrus: Add native ARM64 persistent workers
+ee7aaf2 Merge bitcoin-core/secp256k1#1395: tests: simplify `random_fe_non_zero` (remove loop limit and unneeded normalize)
+ba9cb6f Merge bitcoin-core/secp256k1#1424: ci: Bump major versions for docker actions
+d9d80fd ci: Bump major versions for docker actions
+4fd00f4 Merge bitcoin-core/secp256k1#1422: cmake: Install `libsecp256k1.pc` file
+421d848 ci: Align Autotools/CMake `CI_INSTALL` directory names
+9f005c6 cmake: Install `libsecp256k1.pc` file
+2262d0e ci/cirrus: Bring back skeleton .cirrus.yml without jobs
+b10ddd2 Merge bitcoin-core/secp256k1#1416: doc: Align documented scripts with CI ones
+49be5be Merge bitcoin-core/secp256k1#1390: tests: Replace counting_illegal_callbacks with CHECK_ILLEGAL_VOID
+cbf3053 Merge bitcoin-core/secp256k1#1417: release cleanup: bump version after 0.4.0
+9b118bc release cleanup: bump version after 0.4.0
+7030364 tests: add CHECK_ERROR_VOID and use it in scratch tests
+f8d7ea6 tests: Replace counting_illegal_callbacks with CHECK_ILLEGAL_VOID
+b0f7bfe doc: Do not mention soname in CHANGELOG.md "ABI Compatibility" section
+bd9d98d doc: Align documented scripts with CI ones
+a1d52e3 tests: remove unnecessary test in run_ec_pubkey_parse_test
+875b0ad tests: remove unnecessary set_illegal_callback
+c45b7c4 refactor: introduce testutil.h (deduplicate `random_fe_`, `ge_equals_` helpers)
+dc55141 tests: simplify `random_fe_non_zero` (remove loop limit and unneeded normalize)
+e02f313 Add comment on length checks when parsing ECDSA sigs

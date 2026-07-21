@@ -1,0 +1,3 @@
+Benchmark                     ,    Min(us)    ,    Avg(us)    ,    Max(us)    
+
+ecdsa_sign                    ,    25.0       ,    25.1       ,    25.5    

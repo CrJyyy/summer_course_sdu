@@ -1,0 +1,9 @@
+tag,commit,commit_date,subject
+v0.3.0,bdf39000b9c6a0818e7149ccb500873d079e6e85,2023-03-08T22:14:06+00:00,Merge bitcoin-core/secp256k1#1223: release: prepare for 0.3.0
+v0.3.1,346a053d4c442e08191f075c3932d03140579d47,2023-04-10T19:31:28+00:00,Merge bitcoin-core/secp256k1#1269: changelog: Fix link
+v0.3.2,acf5c55ae6a94e5ca847e07def40427547876101,2023-05-13T19:41:35+02:00,Merge bitcoin-core/secp256k1#1312: release: Prepare for 0.3.2
+v0.4.0,199d27cea32203b224b208627533c2e813cd3b21,2023-09-04T16:26:47+00:00,Merge bitcoin-core/secp256k1#1415: release: Prepare for 0.4.0
+v0.4.1,1ad5185cd42c0636104129fcc9f6a4bf9c67cc40,2023-12-21T16:51:32+01:00,Merge bitcoin-core/secp256k1#1465: release: prepare for 0.4.1
+v0.5.0,e3a885d42a7800c1ccebad94ad1e2b82c4df5c65,2024-05-06T16:56:12+00:00,Merge bitcoin-core/secp256k1#1522: release: prepare for 0.5.0
+v0.5.1,642c885b6102725e25623738529895a95addc4f4,2024-08-01T19:20:10+00:00,Merge bitcoin-core/secp256k1#1575: release: prepare for 0.5.1
+v0.7.1,1a53f4961f337b4d166c25fce72ef0dc88806618,2026-01-26T14:41:38-05:00,Merge bitcoin-core/secp256k1#1808: Prepare for 0.7.1

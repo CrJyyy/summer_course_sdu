@@ -1,0 +1,89 @@
+CMake Warning (deprecated) at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- The C compiler identification is AppleClang 17.0.0.17000013
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Performing Test HAS_64BIT_ASM
+-- Performing Test HAS_64BIT_ASM - Failed
+-- Could NOT find Valgrind (missing: Valgrind_INCLUDE_DIR Valgrind_WORKS) 
+-- Performing Test C_SUPPORTS_PEDANTIC
+-- Performing Test C_SUPPORTS_PEDANTIC - Success
+-- Performing Test C_SUPPORTS_WALL
+-- Performing Test C_SUPPORTS_WALL - Success
+-- Performing Test C_SUPPORTS_WCAST_ALIGN
+-- Performing Test C_SUPPORTS_WCAST_ALIGN - Success
+-- Performing Test C_SUPPORTS_WCAST_ALIGN_STRICT
+-- Performing Test C_SUPPORTS_WCAST_ALIGN_STRICT - Failed
+-- Performing Test C_SUPPORTS_WCONDITIONAL_UNINITIALIZED
+-- Performing Test C_SUPPORTS_WCONDITIONAL_UNINITIALIZED - Success
+-- Performing Test C_SUPPORTS_WEXTRA
+-- Performing Test C_SUPPORTS_WEXTRA - Success
+-- Performing Test C_SUPPORTS_WNESTED_EXTERNS
+-- Performing Test C_SUPPORTS_WNESTED_EXTERNS - Success
+-- Performing Test C_SUPPORTS_WNO_LONG_LONG
+-- Performing Test C_SUPPORTS_WNO_LONG_LONG - Success
+-- Performing Test C_SUPPORTS_WNO_OVERLENGTH_STRINGS
+-- Performing Test C_SUPPORTS_WNO_OVERLENGTH_STRINGS - Success
+-- Performing Test C_SUPPORTS_WNO_UNUSED_FUNCTION
+-- Performing Test C_SUPPORTS_WNO_UNUSED_FUNCTION - Success
+-- Performing Test C_SUPPORTS_WRESERVED_IDENTIFIER
+-- Performing Test C_SUPPORTS_WRESERVED_IDENTIFIER - Success
+-- Performing Test C_SUPPORTS_WSHADOW
+-- Performing Test C_SUPPORTS_WSHADOW - Success
+-- Performing Test C_SUPPORTS_WSTRICT_PROTOTYPES
+-- Performing Test C_SUPPORTS_WSTRICT_PROTOTYPES - Success
+-- Performing Test C_SUPPORTS_WUNDEF
+-- Performing Test C_SUPPORTS_WUNDEF - Success
+
+
+secp256k1 configure summary
+===========================
+Build artifacts:
+  shared library ...................... ON
+  static library ...................... ON
+Optional modules:
+  ECDH ................................ ON
+  ECDSA pubkey recovery ............... OFF
+  extrakeys ........................... ON
+  schnorrsig .......................... ON
+Parameters:
+  ecmult window size .................. 15
+  ecmult gen precision bits ........... 4
+Optional features:
+  assembly optimization ............... OFF
+  external callbacks .................. OFF
+Optional binaries:
+  benchmark ........................... OFF
+  noverify_tests ...................... ON
+  tests ............................... ON
+  exhaustive tests .................... ON
+  ctime_tests ......................... OFF
+  examples ............................ OFF
+
+Cross compiling ....................... FALSE
+Valgrind .............................. OFF
+Preprocessor defined macros ........... ENABLE_MODULE_ECDH=1 ENABLE_MODULE_SCHNORRSIG=1 ENABLE_MODULE_EXTRAKEYS=1 ECMULT_WINDOW_SIZE=15 ECMULT_GEN_PREC_BITS=4
+C compiler ............................ /usr/bin/clang
+CFLAGS ................................ 
+Compile options ....................... -pedantic -Wall -Wcast-align -Wconditional-uninitialized -Wextra -Wnested-externs -Wno-long-long -Wno-overlength-strings -Wno-unused-function -Wreserved-identifier -Wshadow -Wstrict-prototypes -Wundef
+Build type:
+ - CMAKE_BUILD_TYPE ................... Release
+ - CFLAGS ............................. -O2
+ - LDFLAGS for executables ............ 
+ - LDFLAGS for shared libraries ....... 
+
+
+-- Configuring done (3.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.3.0-default

@@ -1,0 +1,65 @@
+[
+  {
+    "tag": "v0.3.0",
+    "variant": "default",
+    "purpose": "security_build_test",
+    "benchmark_enabled": false,
+    "official_tests_passed": true,
+    "ctest_log": "results/raw/ctest_v0.3.0_default.txt",
+    "build": "/Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.3.0-default"
+  },
+  {
+    "tag": "v0.3.1",
+    "variant": "default",
+    "purpose": "security_build_test",
+    "benchmark_enabled": false,
+    "official_tests_passed": true,
+    "ctest_log": "results/raw/ctest_v0.3.1_default.txt",
+    "build": "/Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.3.1-default"
+  },
+  {
+    "tag": "v0.3.2",
+    "variant": "default",
+    "purpose": "security_build_test",
+    "benchmark_enabled": false,
+    "official_tests_passed": true,
+    "ctest_log": "results/raw/ctest_v0.3.2_default.txt",
+    "build": "/Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.3.2-default"
+  },
+  {
+    "tag": "v0.4.1",
+    "variant": "default",
+    "purpose": "performance_benchmark",
+    "benchmark_enabled": true,
+    "official_tests_passed": true,
+    "ctest_log": "results/raw/ctest_v0.4.1_default.txt",
+    "build": "/Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.4.1-default"
+  },
+  {
+    "tag": "v0.5.0",
+    "variant": "table2k",
+    "purpose": "performance_benchmark",
+    "benchmark_enabled": true,
+    "official_tests_passed": true,
+    "ctest_log": "results/raw/ctest_v0.5.0_table2k.txt",
+    "build": "/Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.5.0-table2k"
+  },
+  {
+    "tag": "v0.5.0",
+    "variant": "table22k",
+    "purpose": "performance_benchmark",
+    "benchmark_enabled": true,
+    "official_tests_passed": true,
+    "ctest_log": "results/raw/ctest_v0.5.0_table22k.txt",
+    "build": "/Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.5.0-table22k"
+  },
+  {
+    "tag": "v0.5.0",
+    "variant": "table86k",
+    "purpose": "performance_benchmark",
+    "benchmark_enabled": true,
+    "official_tests_passed": true,
+    "ctest_log": "results/raw/ctest_v0.5.0_table86k.txt",
+    "build": "/Users/xiangshujie/Documents/summer_course/bitcoin/02_secp256k1_report/work/builds/v0.5.0-table86k"
+  }
+]

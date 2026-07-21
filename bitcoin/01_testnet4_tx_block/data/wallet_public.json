@@ -1,0 +1,14 @@
+{
+  "network": "testnet4",
+  "address_hrp": "tb",
+  "sender": {
+    "public_key_hex": "021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8",
+    "address": "tb1qjgfszrz7926jglm0nc702605zh0w2qe9ryr06d",
+    "script_pubkey": "00149213010c5e2ab5247f6f9e3cf569f415dee50325"
+  },
+  "receiver": {
+    "public_key_hex": "03390c3d8b43ac3b49e2b121b138fc2f5d82f3bdc674950191214c5d1f03d5327a",
+    "address": "tb1qu75gwqg4gdfdfurvfxv77trwq9dt6zzgnh2ys5",
+    "script_pubkey": "0014e7a88701154352d4f06c4999ef2c6e015abd0848"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "platform": "Apple ARM64, Apple Clang 17, Release build",
+  "runs_per_variant": 10,
+  "warmups_per_variant": 2,
+  "benchmark": "ecdsa_sign",
+  "v0.4.1_default_median_us": 28.4,
+  "v0.5.0_table2k_median_us": 27.8,
+  "v0.5.0_table22k_median_us": 25.2,
+  "v0.5.0_table86k_median_us": 24.6,
+  "time_reduction_vs_v0.4.1_percent": {
+    "table2k": 2.11,
+    "table22k": 11.27,
+    "table86k": 13.38
+  },
+  "all_official_ctest_suites_passed": true,
+  "interpretation": "Local ARM64 results support the architecture-independent signing algorithm improvement and time-space tradeoff. They do not reproduce x86_64/GCC-specific claims."
+}
+

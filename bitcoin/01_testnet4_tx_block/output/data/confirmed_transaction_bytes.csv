@@ -1,0 +1,224 @@
+offset_start,offset_end,raw_hex,bits,field_path,decoded_value,endian,notes
+0,1,02,00000010,tx.version,2,little,transaction version
+1,2,00,00000000,tx.version,2,little,transaction version
+2,3,00,00000000,tx.version,2,little,transaction version
+3,4,00,00000000,tx.version,2,little,transaction version
+4,5,00,00000000,tx.marker,0,,SegWit marker
+5,6,01,00000001,tx.flag,1,,SegWit serialization flag
+6,7,01,00000001,tx.input_count,1,single byte,CompactSize
+7,8,e2,11100010,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+8,9,ac,10101100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+9,10,8c,10001100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+10,11,3a,00111010,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+11,12,5f,01011111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+12,13,b7,10110111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+13,14,7f,01111111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+14,15,b4,10110100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+15,16,b0,10110000,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+16,17,cc,11001100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+17,18,ff,11111111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+18,19,33,00110011,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+19,20,4d,01001101,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+20,21,27,00100111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+21,22,85,10000101,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+22,23,98,10011000,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+23,24,84,10000100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+24,25,fe,11111110,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+25,26,d4,11010100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+26,27,d0,11010000,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+27,28,c1,11000001,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+28,29,1f,00011111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+29,30,f5,11110101,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+30,31,c4,11000100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+31,32,c4,11000100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+32,33,5f,01011111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+33,34,e7,11100111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+34,35,57,01010111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+35,36,f4,11110100,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+36,37,9a,10011010,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+37,38,61,01100001,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+38,39,a7,10100111,tx.inputs[0].prev_txid,a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2,internal little-endian hash order,
+39,40,00,00000000,tx.inputs[0].prev_vout,0,little,
+40,41,00,00000000,tx.inputs[0].prev_vout,0,little,
+41,42,00,00000000,tx.inputs[0].prev_vout,0,little,
+42,43,00,00000000,tx.inputs[0].prev_vout,0,little,
+43,44,00,00000000,tx.inputs[0].script_sig_length,0,single byte,CompactSize
+44,45,fd,11111101,tx.inputs[0].sequence,4294967293,little,
+45,46,ff,11111111,tx.inputs[0].sequence,4294967293,little,
+46,47,ff,11111111,tx.inputs[0].sequence,4294967293,little,
+47,48,ff,11111111,tx.inputs[0].sequence,4294967293,little,
+48,49,02,00000010,tx.output_count,2,single byte,CompactSize
+49,50,e8,11101000,tx.outputs[0].value_sats,1000,little,amount in satoshis
+50,51,03,00000011,tx.outputs[0].value_sats,1000,little,amount in satoshis
+51,52,00,00000000,tx.outputs[0].value_sats,1000,little,amount in satoshis
+52,53,00,00000000,tx.outputs[0].value_sats,1000,little,amount in satoshis
+53,54,00,00000000,tx.outputs[0].value_sats,1000,little,amount in satoshis
+54,55,00,00000000,tx.outputs[0].value_sats,1000,little,amount in satoshis
+55,56,00,00000000,tx.outputs[0].value_sats,1000,little,amount in satoshis
+56,57,00,00000000,tx.outputs[0].value_sats,1000,little,amount in satoshis
+57,58,16,00010110,tx.outputs[0].script_pubkey_length,22,single byte,CompactSize
+58,59,00,00000000,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+59,60,14,00010100,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+60,61,e7,11100111,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+61,62,a8,10101000,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+62,63,87,10000111,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+63,64,01,00000001,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+64,65,15,00010101,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+65,66,43,01000011,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+66,67,52,01010010,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+67,68,d4,11010100,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+68,69,f0,11110000,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+69,70,6c,01101100,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+70,71,49,01001001,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+71,72,99,10011001,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+72,73,ef,11101111,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+73,74,2c,00101100,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+74,75,6e,01101110,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+75,76,01,00000001,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+76,77,5a,01011010,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+77,78,bd,10111101,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+78,79,08,00001000,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+79,80,48,01001000,tx.outputs[0].script_pubkey,0014e7a88701154352d4f06c4999ef2c6e015abd0848,,locking script
+80,81,3e,00111110,tx.outputs[1].value_sats,998718,little,amount in satoshis
+81,82,3d,00111101,tx.outputs[1].value_sats,998718,little,amount in satoshis
+82,83,0f,00001111,tx.outputs[1].value_sats,998718,little,amount in satoshis
+83,84,00,00000000,tx.outputs[1].value_sats,998718,little,amount in satoshis
+84,85,00,00000000,tx.outputs[1].value_sats,998718,little,amount in satoshis
+85,86,00,00000000,tx.outputs[1].value_sats,998718,little,amount in satoshis
+86,87,00,00000000,tx.outputs[1].value_sats,998718,little,amount in satoshis
+87,88,00,00000000,tx.outputs[1].value_sats,998718,little,amount in satoshis
+88,89,16,00010110,tx.outputs[1].script_pubkey_length,22,single byte,CompactSize
+89,90,00,00000000,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+90,91,14,00010100,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+91,92,92,10010010,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+92,93,13,00010011,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+93,94,01,00000001,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+94,95,0c,00001100,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+95,96,5e,01011110,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+96,97,2a,00101010,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+97,98,b5,10110101,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+98,99,24,00100100,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+99,100,7f,01111111,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+100,101,6f,01101111,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+101,102,9e,10011110,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+102,103,3c,00111100,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+103,104,f5,11110101,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+104,105,69,01101001,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+105,106,f4,11110100,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+106,107,15,00010101,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+107,108,de,11011110,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+108,109,e5,11100101,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+109,110,03,00000011,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+110,111,25,00100101,tx.outputs[1].script_pubkey,00149213010c5e2ab5247f6f9e3cf569f415dee50325,,locking script
+111,112,02,00000010,tx.witnesses[0].item_count,2,single byte,CompactSize
+112,113,48,01001000,tx.witnesses[0].items[0].length,72,single byte,CompactSize
+113,114,30,00110000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+114,115,45,01000101,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+115,116,02,00000010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+116,117,21,00100001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+117,118,00,00000000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+118,119,af,10101111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+119,120,01,00000001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+120,121,75,01110101,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+121,122,f0,11110000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+122,123,22,00100010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+123,124,26,00100110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+124,125,20,00100000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+125,126,ee,11101110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+126,127,92,10010010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+127,128,64,01100100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+128,129,40,01000000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+129,130,6c,01101100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+130,131,ca,11001010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+131,132,cc,11001100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+132,133,db,11011011,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+133,134,e1,11100001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+134,135,27,00100111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+135,136,74,01110100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+136,137,42,01000010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+137,138,e3,11100011,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+138,139,24,00100100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+139,140,78,01111000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+140,141,08,00001000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+141,142,dc,11011100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+142,143,d6,11010110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+143,144,97,10010111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+144,145,dc,11011100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+145,146,df,11011111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+146,147,b2,10110010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+147,148,9d,10011101,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+148,149,94,10010100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+149,150,78,01111000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+150,151,02,00000010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+151,152,20,00100000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+152,153,25,00100101,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+153,154,a1,10100001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+154,155,83,10000011,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+155,156,f8,11111000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+156,157,a6,10100110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+157,158,47,01000111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+158,159,ac,10101100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+159,160,59,01011001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+160,161,ee,11101110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+161,162,66,01100110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+162,163,a4,10100100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+163,164,40,01000000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+164,165,9a,10011010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+165,166,67,01100111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+166,167,56,01010110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+167,168,c8,11001000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+168,169,0f,00001111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+169,170,14,00010100,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+170,171,67,01100111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+171,172,a5,10100101,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+172,173,0b,00001011,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+173,174,e2,11100010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+174,175,f1,11110001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+175,176,10,00010000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+176,177,48,01001000,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+177,178,fe,11111110,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+178,179,f9,11111001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+179,180,f7,11110111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+180,181,1a,00011010,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+181,182,1f,00011111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+182,183,4f,01001111,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+183,184,8b,10001011,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+184,185,01,00000001,tx.witnesses[0].items[0].data,3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01,,witness stack element; not Script bytecode by itself
+185,186,21,00100001,tx.witnesses[0].items[1].length,33,single byte,CompactSize
+186,187,02,00000010,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+187,188,1c,00011100,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+188,189,2a,00101010,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+189,190,98,10011000,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+190,191,e8,11101000,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+191,192,39,00111001,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+192,193,fb,11111011,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+193,194,46,01000110,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+194,195,a7,10100111,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+195,196,5c,01011100,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+196,197,19,00011001,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+197,198,52,01010010,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+198,199,8a,10001010,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+199,200,8e,10001110,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+200,201,74,01110100,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+201,202,66,01100110,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+202,203,c4,11000100,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+203,204,1f,00011111,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+204,205,fa,11111010,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+205,206,46,01000110,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+206,207,39,00111001,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+207,208,ac,10101100,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+208,209,3d,00111101,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+209,210,b7,10110111,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+210,211,17,00010111,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+211,212,96,10010110,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+212,213,3c,00111100,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+213,214,83,10000011,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+214,215,55,01010101,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+215,216,d3,11010011,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+216,217,a7,10100111,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+217,218,de,11011110,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+218,219,c8,11001000,tx.witnesses[0].items[1].data,021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8,,witness stack element; not Script bytecode by itself
+219,220,00,00000000,tx.locktime,0,little,
+220,221,00,00000000,tx.locktime,0,little,
+221,222,00,00000000,tx.locktime,0,little,
+222,223,00,00000000,tx.locktime,0,little,

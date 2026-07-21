@@ -1,0 +1,5 @@
+tag,variant,ecmult_gen_table_kib,library_artifact,library_bytes,library_kib
+v0.4.1,default,version default,work/builds/v0.4.1-default/src/libsecp256k1.2.dylib,1336120,1304.8047
+v0.5.0,table2k,2,work/builds/v0.5.0-table2k/src/libsecp256k1.2.dylib,1270344,1240.5703
+v0.5.0,table22k,22,work/builds/v0.5.0-table22k/src/libsecp256k1.2.dylib,1286856,1256.6953
+v0.5.0,table86k,86,work/builds/v0.5.0-table86k/src/libsecp256k1.2.dylib,1352904,1321.1953

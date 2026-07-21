@@ -1,0 +1,38 @@
+[
+  {
+    "release": "v0.3.1",
+    "merge_commit": "2d51a454fcb91a995ca7d82370693d33dc83c659",
+    "pull_request": 1257,
+    "title": "ct: Use volatile trick in all fe/scalar cmov implementations",
+    "url": "https://github.com/bitcoin-core/secp256k1/pull/1257"
+  },
+  {
+    "release": "v0.3.2",
+    "merge_commit": "ab5a9171286f24641fe0c612a6961e10731730d1",
+    "pull_request": 1303,
+    "title": "ct: Use more volatile",
+    "url": "https://github.com/bitcoin-core/secp256k1/pull/1303"
+  },
+  {
+    "release": "v0.4.1",
+    "merge_commit": "10e6d29b60c3931e327bc18e6c50cea78296b1ba",
+    "pull_request": 1446,
+    "title": "field: Remove x86_64 asm",
+    "url": "https://github.com/bitcoin-core/secp256k1/pull/1446"
+  },
+  {
+    "release": "v0.5.0",
+    "merge_commit": "da515074e3ebc8abc85a4fff3a31d7694ecf897b",
+    "pull_request": 1058,
+    "title": "Signed-digit multi-comb ecmult_gen algorithm",
+    "url": "https://github.com/bitcoin-core/secp256k1/pull/1058"
+  },
+  {
+    "release": "v0.5.1",
+    "merge_commit": "ca06e58b2ce18d170546ad13429fb9319451f48a",
+    "pull_request": 1564,
+    "title": "Adjust the default size of the precomputed table for signing",
+    "url": "https://github.com/bitcoin-core/secp256k1/pull/1564"
+  }
+]
+

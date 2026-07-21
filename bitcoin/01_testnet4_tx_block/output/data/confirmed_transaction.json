@@ -1,0 +1,90 @@
+{
+  "version": 2,
+  "has_witness": true,
+  "inputs": [
+    {
+      "prev_txid": "a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2",
+      "prev_vout": 0,
+      "script_sig": "",
+      "script_sig_asm": [],
+      "sequence": 4294967293
+    }
+  ],
+  "outputs": [
+    {
+      "value_sats": 1000,
+      "script_pubkey": "0014e7a88701154352d4f06c4999ef2c6e015abd0848",
+      "script_type": {
+        "type": "p2wpkh",
+        "witness_version": 0,
+        "payload": "e7a88701154352d4f06c4999ef2c6e015abd0848"
+      },
+      "script_pubkey_asm": [
+        {
+          "offset": 0,
+          "opcode": "0x00",
+          "name": "OP_0",
+          "end_offset": 1
+        },
+        {
+          "offset": 1,
+          "opcode": "0x14",
+          "name": "PUSH_20",
+          "push_length": 20,
+          "data": "e7a88701154352d4f06c4999ef2c6e015abd0848",
+          "end_offset": 22
+        }
+      ]
+    },
+    {
+      "value_sats": 998718,
+      "script_pubkey": "00149213010c5e2ab5247f6f9e3cf569f415dee50325",
+      "script_type": {
+        "type": "p2wpkh",
+        "witness_version": 0,
+        "payload": "9213010c5e2ab5247f6f9e3cf569f415dee50325"
+      },
+      "script_pubkey_asm": [
+        {
+          "offset": 0,
+          "opcode": "0x00",
+          "name": "OP_0",
+          "end_offset": 1
+        },
+        {
+          "offset": 1,
+          "opcode": "0x14",
+          "name": "PUSH_20",
+          "push_length": 20,
+          "data": "9213010c5e2ab5247f6f9e3cf569f415dee50325",
+          "end_offset": 22
+        }
+      ]
+    }
+  ],
+  "witnesses": [
+    [
+      "3045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b01",
+      "021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8"
+    ]
+  ],
+  "locktime": 0,
+  "start_offset": 0,
+  "end_offset": 223,
+  "raw_hex": "02000000000101e2ac8c3a5fb77fb4b0ccff334d27859884fed4d0c11ff5c4c45fe757f49a61a70000000000fdffffff02e803000000000000160014e7a88701154352d4f06c4999ef2c6e015abd08483e3d0f00000000001600149213010c5e2ab5247f6f9e3cf569f415dee5032502483045022100af0175f0222620ee9264406ccaccdbe1277442e3247808dcd697dcdfb29d9478022025a183f8a647ac59ee66a4409a6756c80f1467a50be2f11048fef9f71a1f4f8b0121021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec800000000",
+  "stripped_hex": "0200000001e2ac8c3a5fb77fb4b0ccff334d27859884fed4d0c11ff5c4c45fe757f49a61a70000000000fdffffff02e803000000000000160014e7a88701154352d4f06c4999ef2c6e015abd08483e3d0f00000000001600149213010c5e2ab5247f6f9e3cf569f415dee5032500000000",
+  "txid": "fda3dd67e4516d68c4f023a43c7a92629b9262d7e816d09cae873907c3666428",
+  "wtxid": "dbebb2a01ab826570124b004a33d6da4a14f552dfbb29323a7520d7a9f1d1fba",
+  "size": 223,
+  "base_size": 113,
+  "witness_size": 110,
+  "weight": 562,
+  "vsize": 141,
+  "byte_coverage": {
+    "start": 0,
+    "end": 223,
+    "byte_count": 223,
+    "record_count": 223,
+    "complete": true
+  }
+}

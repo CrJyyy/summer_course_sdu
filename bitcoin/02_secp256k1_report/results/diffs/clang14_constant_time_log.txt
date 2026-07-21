@@ -1,0 +1,38 @@
+346a053 Merge bitcoin-core/secp256k1#1269: changelog: Fix link
+6a37b2a changelog: Fix link
+ec98fce Merge bitcoin-core/secp256k1#1266: release: Prepare for 0.3.1
+898e1c6 release: Prepare for 0.3.1
+1d9a13f changelog: Remove inconsistent newlines
+0e09166 changelog: Catch up in preparation of 0.3.1
+7b7503d Merge bitcoin-core/secp256k1#1245: tests: Add Wycheproof ECDSA vectors
+145078c Merge bitcoin-core/secp256k1#1118: Add x-only ecmult_const version with x specified as n/d
+e5de454 tests: Add Wycheproof ECDSA vectors
+0f86420 Add exhaustive tests for ecmult_const_xonly
+4485926 Add x-only ecmult_const version for x=n/d
+a0f4644 Merge bitcoin-core/secp256k1#1252: Make position of * in pointer declarations in include/ consistent
+4e68262 Merge bitcoin-core/secp256k1#1226: Add CMake instructions to release process
+2d51a45 Merge bitcoin-core/secp256k1#1257: ct: Use volatile "trick" in all fe/scalar cmov implementations
+4a496a3 ct: Use volatile "trick" in all fe/scalar cmov implementations
+3d1f430 Make position of * in pointer declarations in include/ consistent
+2bca0a5 Merge bitcoin-core/secp256k1#1241: build: Improve `SECP_TRY_APPEND_DEFAULT_CFLAGS` macro
+afd8b23 Merge bitcoin-core/secp256k1#1244: Suppress `-Wunused-parameter` when building for coverage analysis
+1d8f367 Merge bitcoin-core/secp256k1#1250: No need to subtract 1 before doing a right shift
+3e43041 No need to subtract 1 before doing a right shift
+3addb4c build: Improve `SECP_TRY_APPEND_DEFAULT_CFLAGS` macro
+0c07c82 Add CMake instructions to release process
+464a911 Merge bitcoin-core/secp256k1#1242: Set ARM ASM symbol visibility to `hidden`
+f16a709 Merge bitcoin-core/secp256k1#1247: Apply Checks only in VERIFY mode.
+70be3ca Merge bitcoin-core/secp256k1#1246: Typo
+4ebd828 Apply Checks only in VERIFY mode.
+d1e7ca1 Typo
+5bb03c2 Replace `SECP256K1_ECMULT_TABLE_VERIFY` macro by a function
+9c8c4f4 Merge bitcoin-core/secp256k1#1238: build: bump CMake minimum requirement to 3.13
+0cf2fb9 Merge bitcoin-core/secp256k1#1243: build: Ensure no optimization when building for coverage analysis
+fd2a408 Set ARM ASM symbol visibility to `hidden`
+4429a8c Suppress `-Wunused-parameter` when building for coverage analysis
+8e79c7e build: Ensure no optimization when building for coverage analysis
+96dd062 build: bump CMake minimum requirement to 3.13
+427bc3c Merge bitcoin-core/secp256k1#1236: Update comment for secp256k1_modinv32_inv256
+647f0a5 Update comment for secp256k1_modinv32_inv256
+5658209 Merge bitcoin-core/secp256k1#1228: release cleanup: bump version after 0.3.0
+28e63f7 release cleanup: bump version after 0.3.0

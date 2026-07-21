@@ -1,0 +1,13 @@
+[1/13] Building C object src/CMakeFiles/precomputed.dir/precomputed_ecmult_gen.c.o
+[2/13] Building C object src/CMakeFiles/precomputed.dir/precomputed_ecmult.c.o
+[3/13] Building C object src/CMakeFiles/secp256k1_static.dir/secp256k1.c.o
+[4/13] Building C object src/CMakeFiles/secp256k1.dir/secp256k1.c.o
+[5/13] Linking C shared library src/libsecp256k1.2.0.0.dylib
+[6/13] Linking C static library src/libsecp256k1.a
+[7/13] Creating library symlink src/libsecp256k1.2.dylib src/libsecp256k1.dylib
+[8/13] Building C object src/CMakeFiles/exhaustive_tests.dir/tests_exhaustive.c.o
+[9/13] Linking C executable src/exhaustive_tests
+[10/13] Building C object src/CMakeFiles/tests.dir/tests.c.o
+[11/13] Linking C executable src/tests
+[12/13] Building C object src/CMakeFiles/noverify_tests.dir/tests.c.o
+[13/13] Linking C executable src/noverify_tests

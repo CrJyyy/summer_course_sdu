@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "btc-testnet4-lab"
+version = "0.1.0"
+description = "Manual Bitcoin Testnet4 P2WPKH transaction and block byte parser"
+requires-python = ">=3.11"
+dependencies = [
+  "coincurve>=21.0.0,<22",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9"]
+
+[project.scripts]
+btc-lab = "btc_lab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+

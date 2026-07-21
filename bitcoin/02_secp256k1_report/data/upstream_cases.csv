@@ -1,0 +1,7 @@
+category,release,date,case,upstream_claim,local_method
+security,v0.3.1,2023-04-10,Clang 14+ conditional move constant-time regression,"Avoid secret-dependent control flow and memory access in conditional moves",Compare v0.3.0..v0.3.1 source and compile/test with Apple Clang 17
+security,v0.3.2,2023-05-13,GCC 13.1 ECDH constant-time regression,"Avoid secret-dependent control flow in ECDH computations",Static source/tag evidence only because local compiler is Clang
+performance,v0.4.1,2023-12-21,Remove handwritten x86_64 field assembly,"Upstream GCC 10.5 reports about 10 percent faster ECDSA and Schnorr verification",Static upstream evidence only because local machine is ARM64
+performance,v0.5.0,2024-05-06,Replace signing/public-key fixed-base multiplication,"Improved signing and public-key generation with 2/22/86 KiB precomputed tables",Local Release benchmark across v0.4.1 and v0.5.0 table sizes
+performance,v0.5.1,2024-08-01,Increase default ecmult_gen table,"Default changed from 22 KiB to 86 KiB",Local v0.5.0 2/22/86 KiB time-space comparison
+

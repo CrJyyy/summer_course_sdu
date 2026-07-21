@@ -1,0 +1,66 @@
+642c885 Merge bitcoin-core/secp256k1#1575: release: prepare for 0.5.1
+cdf08c1 Merge bitcoin-core/secp256k1#1576: doc: mention `needs-changelog` github label in release process
+40d87b8 release: prepare for 0.5.1
+5770226 changelog: clarify CMake option
+759bd4b doc: mention `needs-changelog` github label in release process
+fded437 Merge bitcoin-core/secp256k1#1574: Fix compilation when extrakeys module isn't enabled
+763d938 ci: only enable extrakeys module when schnorrsig is enabled
+af551ab tests: do not use functions from extrakeys module
+0055b86 Merge bitcoin-core/secp256k1#1551: Add ellswift usage example
+ea2d5f0 Merge bitcoin-core/secp256k1#1563: doc: Add convention for defaults
+ca06e58 Merge bitcoin-core/secp256k1#1564: build, ci: Adjust the default size of the precomputed table for signing
+e2af491 ci: Switch to the new default value of the precomputed table for signing
+d94a927 build: Adjust the default size of the precomputed table for signing
+fcc5d73 Merge bitcoin-core/secp256k1#1565: cmake: Bump CMake minimum required version up to 3.16
+9420eec cmake: Bump CMake minimum required version up to 3.16
+1668564 doc: Add convention for defaults
+a526937 Merge bitcoin-core/secp256k1#1555: Fixed O3 replacement
+b8fe333 cmake: Fixed O3 replacement
+31f8459 Add ellswift usage example
+fe4fbaa examples: fix case typos in secret clearing paragraphs (s/, Or/, or/)
+4af241b Merge bitcoin-core/secp256k1#1535: build: Replace hardcoded "auto" value with default one
+f473c95 Merge bitcoin-core/secp256k1#1543: cmake: Do not modify build types when integrating by downstream project
+d403eea Merge bitcoin-core/secp256k1#1546: cmake: Rename `SECP256K1_LATE_CFLAGS` and switch to Bitcoin Core's approach
+d7ae25c Merge bitcoin-core/secp256k1#1550: fix: typos in secp256k1.c
+0e2fadb fix: typos in secp256k1.c
+69b2192 Merge bitcoin-core/secp256k1#1545: cmake: Do not set `CTEST_TEST_TARGET_ALIAS`
+5dd637f Merge bitcoin-core/secp256k1#1548: README: mention ellswift module
+7454a53 README: mention ellswift module
+4706be2 cmake: Reimplement `SECP256K1_APPEND_CFLAGS` using Bitcoin Core approach
+c2764db cmake: Rename `SECP256K1_LATE_CFLAGS` to `SECP256K1_APPEND_CFLAGS`
+f87a358 cmake: Do not set `CTEST_TEST_TARGET_ALIAS`
+158f9e5 cmake: Do not modify build types when integrating by downstream project
+35c0fdc Merge bitcoin-core/secp256k1#1529: cmake: Fix cache issue when integrating by downstream project
+4392f0f Merge bitcoin-core/secp256k1#1533: tests: refactor: tidy up util functions (#1491)
+bedffd5 Merge bitcoin-core/secp256k1#1488: ci: Add native macOS arm64 job
+4b8d5ee Merge bitcoin-core/secp256k1#1532: cmake: Disable eager MSan in ctime_tests
+f55703b autotools: Delete unneeded compiler test
+396e885 autotools: Align MSan checking code with CMake's implementation
+abde59f cmake: Report more compiler details in summary
+7abf979 cmake: Disable `ctime_tests` if build with `-fsanitize=memory`
+4d9645b cmake: Remove "AUTO" value of `SECP256K1_ECMULT_GEN_KB` option
+a06805e cmake: Remove "AUTO" value of `SECP256K1_ECMULT_WINDOW_SIZE` option
+1791f6f Merge bitcoin-core/secp256k1#1517: autotools: Disable eager MSan in ctime_tests
+26b94ee autotools: Remove "auto" value of `--with-ecmult-gen-kb` option
+122dbae autotools: Remove "auto" value of `--with-ecmult-window` option
+e73f6f8 tests: refactor: drop `secp256k1_` prefix from testrand.h functions
+0ee7453 tests: refactor: add `testutil_` prefix to testutil.h functions
+0c6bc76 tests: refactor: move `random_` helpers from tests.c to testutil.h
+0fef847 tests: refactor: rename `random_field_element_magnitude` -> `random_fe_magnitude`
+59db007 tests: refactor: rename `random_group_element_...` -> `random_ge_...`
+ebfb82e ci: Add job with -fsanitize-memory-param-retval
+e1bef09 configure: Move "experimental" warning to bottom
+55e5d97 autotools: Disable eager MSan in ctime_tests
+06bff6d Merge bitcoin-core/secp256k1#1528: tests: call `secp256k1_ecmult_multi_var` with a non-`NULL` error callback
+ec4c002 cmake: Simplify `PROJECT_IS_TOP_LEVEL` emulation
+cae9a7a cmake: Do not set emulated PROJECT_IS_TOP_LEVEL as cache variable
+4155e62 Merge bitcoin-core/secp256k1#1526: cmake: Fix `check_arm32_assembly` when using as subproject
+9554362 tests: call secp256k1_ecmult_multi_var with a non-NULL error callback
+9f4c8cd cmake: Fix `check_arm32_assembly` when using as subproject
+7712a53 Merge bitcoin-core/secp256k1#1524: check-abi: explicitly provide public headers
+7d0bc08 Merge bitcoin-core/secp256k1#1525: changelog: Correct 0.5.0 release date
+d45d9b7 changelog: Correct 0.5.0 release date
+d7f6613 Merge bitcoin-core/secp256k1#1523: release cleanup: bump version after 0.5.0
+2f05e2d release cleanup: bump version after 0.5.0
+dd69556 check-abi: explicitly provide public headers
+218f0cc ci: Add native macOS arm64 job

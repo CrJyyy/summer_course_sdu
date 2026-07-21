@@ -1,0 +1,139 @@
+acf5c55 Merge bitcoin-core/secp256k1#1312: release: Prepare for 0.3.2
+d490ca2 release: Prepare for 0.3.2
+3e3d125 Merge bitcoin-core/secp256k1#1309: changelog: Catch up
+e8295d0 Merge bitcoin-core/secp256k1#1311: Revert "Remove unused scratch space from API"
+697e1cc changelog: Catch up
+3ad1027 Revert "Remove unused scratch space from API"
+76b43f3 changelog: Add entry for #1303
+7d4f86d Merge bitcoin-core/secp256k1#1307: Mark more assembly outputs as early clobber
+b54a067 Merge bitcoin-core/secp256k1#1304: build: Rename arm to arm32 and check if it's really supported
+c6bb29b build: Rename `64bit` to `x86_64`
+8c9ae37 Add release note
+0324645 autotools: Add `SECP_ARM32_ASM_CHECK` macro
+ed4ba23 cmake: Add `check_arm32_assembly` function
+350b4bd Mark stack variables as early clobber for technical correctness
+0c729ba Bugfix: mark outputs as early clobber in scalar x86_64 asm
+3353d3c Merge bitcoin-core/secp256k1#1207: Split fe_set_b32 into reducing and normalizing variants
+5b32602 Split fe_set_b32 into reducing and normalizing variants
+006ddc1 Merge bitcoin-core/secp256k1#1306: build: Make tests work with external default callbacks
+1907f0f build: Make tests work with external default callbacks
+fb3a806 Merge bitcoin-core/secp256k1#1133: schnorrsig: Add test vectors for variable-length messages
+cd54ac7 schnorrsig: Improve docs of schnorrsig_sign_custom
+28687b0 schnorrsig: Add BIP340 varlen test vectors
+97a98be schnorrsig: Refactor test vector code to allow varlen messages
+ab5a917 Merge bitcoin-core/secp256k1#1303: ct: Use more volatile
+9eb6934 Merge bitcoin-core/secp256k1#1305: Remove unused scratch space from API
+073d98a Merge bitcoin-core/secp256k1#1292: refactor: Make 64-bit shift explicit
+17fa217 ct: Be cautious and use volatile trick in more "conditional" paths
+5fb336f ct: Use volatile trick in scalar_cond_negate
+712e7f8 Remove unused scratch space from API
+54d34b6 Merge bitcoin-core/secp256k1#1300: Avoid normalize conditional on VERIFY
+c63ec88 Merge bitcoin-core/secp256k1#1066: Abstract out and merge all the magnitude/normalized logic
+7fc642f Simplify secp256k1_fe_{impl_,}verify
+4e176ad Abstract out verify logic for fe_is_square_var
+4371f98 Abstract out verify logic for fe_add_int
+89e324c Abstract out verify logic for fe_half
+283cd80 Abstract out verify logic for fe_get_bounds
+d5aa2f0 Abstract out verify logic for fe_inv{,_var}
+3167646 Abstract out verify logic for fe_from_storage
+76d31e5 Abstract out verify logic for fe_to_storage
+1e6894b Abstract out verify logic for fe_cmov
+be82bd8 Improve comments/checks for fe_sqrt
+6ab3508 Abstract out verify logic for fe_sqr
+4c25f6e Abstract out verify logic for fe_mul
+e179e65 Abstract out verify logic for fe_add
+7e7ad7f Abstract out verify logic for fe_mul_int
+65d82a3 Abstract out verify logic for fe_negate
+1446708 Abstract out verify logic for fe_get_b32
+f7a7666 Abstract out verify logic for fe_set_b32
+ce4d209 Abstract out verify logic for fe_cmp_var
+7d7d43c Improve comments/check for fe_equal{,_var}
+c5e788d Abstract out verify logic for fe_is_odd
+d3f3fe8 Abstract out verify logic for fe_is_zero
+c701d9a Abstract out verify logic for fe_clear
+19a2bfe Abstract out verify logic for fe_set_int
+864f9db Abstract out verify logic for fe_normalizes_to_zero{,_var}
+6c31371 Abstract out verify logic for fe_normalize_var
+e28b51f Abstract out verify logic for fe_normalize_weak
+b6b6f9c Abstract out verify logic for fe_normalize
+7fa5195 Bugfix: correct SECP256K1_FE_CONST mag/norm fields
+e5cf4bf build: Rename `arm` to `arm32`
+b29566c Merge magnitude/normalized fields, move/improve comments
+97c63b9 Avoid normalize conditional on VERIFY
+341cc19 Merge bitcoin-core/secp256k1#1299: Infinity handling: ecmult_const(infinity) works, and group verification
+bbc8344 Avoid secp256k1_ge_set_gej_zinv with uninitialized z
+0a2e0b2 Make secp256k1_{fe,ge,gej}_verify work as no-op if non-VERIFY
+f202667 Add invariant checking to group elements
+a18821d Always initialize output coordinates in secp256k1_ge_set_gej
+3086cb9 Expose secp256k1_fe_verify to other modules
+a0e696f Make secp256k1_ecmult_const handle infinity
+24c768a Merge bitcoin-core/secp256k1#1301: Avoid using bench_verify_data as bench_sign_data; merge them
+2e65f1f Avoid using bench_verify_data as bench_sign_data; merge them
+1cf15eb Merge bitcoin-core/secp256k1#1296: docs: complete interface description for `secp256k1_schnorrsig_sign_custom`
+149c41c docs: complete interface description for `secp256k1_schnorrsig_sign_custom`
+f30c748 Merge bitcoin-core/secp256k1#1270: cmake: Fix library ABI versioning
+d1e48e5 refactor: Make 64-bit shift explicit
+b2e29e4 ci: Treat all compiler warnings as errors in "Windows (VS 2022)" task
+3c81838 Merge bitcoin-core/secp256k1#1289: cmake: Use full signature of `add_test()` command
+755629b cmake: Use full signature of `add_test()` command
+bef448f cmake: Fix library ABI versioning
+4b0f711 Merge bitcoin-core/secp256k1#1277: autotools: Clean up after adding Wycheproof
+222ecaf Merge bitcoin-core/secp256k1#1284: cmake: Some improvements using `PROJECT_IS_TOP_LEVEL` variable
+71f746c cmake: Include `include` directory for subtree builds
+024a409 Merge bitcoin-core/secp256k1#1240: cmake: Improve and document compiler flag checks
+a8d059f cmake, doc: Document compiler flags
+6ece150 cmake, refactor: Rename `try_add_compile_option` to `try_append_cflags`
+19516ed cmake: Use `add_compile_options()` in `try_add_compile_option()`
+4b84f4b Merge bitcoin-core/secp256k1#1239: cmake: Bugfix and other improvements after bumping CMake up to 3.13
+596b336 Merge bitcoin-core/secp256k1#1234: cmake: Add dev-mode
+6b7e5b7 Merge bitcoin-core/secp256k1#1275: build: Fix C4005 "macro redefinition" MSVC warnings in examples
+1c89536 Merge bitcoin-core/secp256k1#1286: tests: remove extra semicolon in macro
+c4062d6 debug: move helper for printing buffers into util.h
+7e977b3 autotools: Take VPATH builds into account when generating testvectors
+2418d32 autotools: Create src/wycheproof dir before creating file in it
+8764034 autotools: Make all "pregenerated" targets .PHONY
+e1b9ce8 autotools: Use same conventions for all pregenerated files
+3858bad tests: remove extra semicolon in macro
+1f33bb2 Merge bitcoin-core/secp256k1#1205: field: Improve docs +tests of secp256k1_fe_set_b32
+162da73 tests: Add debug helper for printing buffers
+e9fd3df field: Improve docs and tests of secp256k1_fe_set_b32
+f6bef03 Merge bitcoin-core/secp256k1#1283: Get rid of secp256k1_fe_const_b
+5431b9d cmake: Make `SECP256K1_INSTALL` default depend on `PROJECT_IS_TOP_LEVEL`
+5ec1333 Merge bitcoin-core/secp256k1#1285: bench: Make sys/time.h a system include
+68b16a1 bench: Make sys/time.h a system include
+162608c cmake: Emulate `PROJECT_IS_TOP_LEVEL` for CMake<3.21
+69e1ec0 Get rid of secp256k1_fe_const_b
+ce5ba9e gitignore: Add CMakeUserPresets.json
+0a446a3 cmake: Add dev-mode CMake preset
+a6f4bcf Merge bitcoin-core/secp256k1#1231: Move `SECP256K1_INLINE` macro definition out from `include/secp256k1.h`
+a273d74 cmake: Improve version comparison
+6a58b48 cmake: Use `if(... IN_LIST ...)` command
+2445808 cmake: Use dedicated `GENERATOR_IS_MULTI_CONFIG` property
+9f8703e cmake: Use dedicated `CMAKE_HOST_APPLE` variable
+8c20170 cmake: Use recommended `add_compile_definitions` command
+04d4cc0 cmake: Add `DESCRIPTION` and `HOMEPAGE_URL` options to `project` command
+8a8b653 cmake: Use `SameMinorVersion` compatibility mode
+5b0444a Merge bitcoin-core/secp256k1#1263: cmake: Make installation optional
+47ac3d6 cmake: Make installation optional
+2e035af Merge bitcoin-core/secp256k1#1273: build: Make `SECP_VALGRIND_CHECK` preserve `CPPFLAGS`
+5be353d Merge bitcoin-core/secp256k1#1279: tests: lint wycheproof's python script
+08f4b16 autotools: Move code around to tidy Makefile
+04bf3f6 Merge bitcoin-core/secp256k1#1230: Build: allow static or shared but not both
+9ce9984 Merge bitcoin-core/secp256k1#1265: Remove bits argument from secp256k1_wnaf_const{_xonly}
+566faa1 Merge bitcoin-core/secp256k1#1267: doc: clarify process for patch releases
+ef49a11 build: allow static or shared but not both
+35ada3b tests: lint wycheproof's python script
+4258c54 Merge bitcoin-core/secp256k1#1276: autotools: Don't regenerate Wycheproof header automatically
+529b54d autotools: Move Wycheproof header from EXTRA_DIST to noinst_HEADERS
+06c67de autotools: Don't regenerate Wycheproof header automatically
+dc0657c build: Fix C4005 "macro redefinition" MSVC warnings in examples
+1ecb94e build: Make `SECP_VALGRIND_CHECK` preserve `CPPFLAGS`
+3bab71c Merge bitcoin-core/secp256k1#1268: release cleanup: bump version after 0.3.1
+656c6ea release cleanup: bump version after 0.3.1
+1b6fb55 doc: clarify process for patch releases
+a575339 Remove bits argument from secp256k1_wnaf_const (always 256)
+36b0adf build: remove warning until it's reproducible
+8e142ca Move `SECP256K1_INLINE` macro definition out from `include/secp256k1.h`
+7744589 Remove `SECP256K1_INLINE` usage from examples
+ca92a35 field: Simplify code in secp256k1_fe_set_b32
+d93f62e field: Verify field element even after secp256k1_fe_set_b32 fails
