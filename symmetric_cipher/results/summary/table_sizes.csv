@@ -1,0 +1,5 @@
+ttable-layout,bytes
+AES-four-table,4096
+SM4-four-table,4096
+SM4-one-table-rotate,1024
+SM4-overlap,2048

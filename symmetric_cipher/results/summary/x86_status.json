@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "architecture": "x86_64",
+  "status": "pending_target_machine_execution",
+  "performance_samples": 0,
+  "cycles_per_byte": null,
+  "runtime_backend_instruction_witnesses": [
+    "AESENC",
+    "AESDEC",
+    "VAESENC",
+    "VAESDEC",
+    "VPSHUFB",
+    "PCLMULQDQ",
+    "VPCLMULQDQ",
+    "VGF2P8AFFINEINVQB",
+    "VSM4RNDS4",
+    "VSM4KEY4"
+  ],
+  "note": "Cross-compilation and disassembly pass on the ARM64 development host; no x86 performance values are fabricated."
+}
