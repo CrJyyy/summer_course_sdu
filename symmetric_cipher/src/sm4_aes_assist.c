@@ -102,7 +102,7 @@ void sc_sm4_encrypt4_aes_assist(const sc_sm4_key *key, const uint8_t in[64],
                 candidate, _mm_cmpeq_epi8(hi, _mm_set1_epi8((char)row))));
         }
         __m128i b = _mm_shuffle_epi8(
-            _mm_aesenc_si128(mapped, _mm_setzero_si128()), inverse_shift);
+            _mm_aesenclast_si128(mapped, _mm_setzero_si128()), inverse_shift);
 #define ROTL(v,n) _mm_or_si128(_mm_slli_epi32((v),(n)), \
                                _mm_srli_epi32((v),32-(n)))
         __m128i l = _mm_xor_si128(

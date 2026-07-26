@@ -66,9 +66,9 @@ static void openssl_gcm(const char *name, const uint8_t key[16],
     EVP_CIPHER_free(cipher);
 }
 
-static void test_algorithm(sc_algorithm algorithm, const char *ecb,
-                           const char *ctr, const char *gcm,
-                           const char *xts) {
+static void test_backend(sc_algorithm algorithm, sc_backend backend,
+                         const char *ecb, const char *ctr, const char *gcm,
+                         const char *xts) {
     for (unsigned iter = 0; iter < 40; ++iter) {
         uint8_t key[16], key2[16], combined[32], iv[16], tweak[16];
         uint8_t in[97], ours[97], theirs[97], tag1[16], tag2[16];
@@ -78,9 +78,15 @@ static void test_algorithm(sc_algorithm algorithm, const char *ecb,
         random_bytes(tweak, sizeof(tweak));
         random_bytes(in, sizeof(in));
         sc_ctx ctx, tw;
-        require(sc_init(&ctx, algorithm, SC_BACKEND_REF, key, 16) == SC_OK,
+        sc_status init = sc_init(&ctx, algorithm, backend, key, 16);
+        if (init == SC_ERR_UNSUPPORTED) {
+            printf("SKIP: OpenSSL differential %s/%s unsupported\n",
+                   sc_algorithm_name(algorithm), sc_backend_name(backend));
+            return;
+        }
+        require(init == SC_OK,
                 "local init");
-        require(sc_init(&tw, algorithm, SC_BACKEND_REF, key2, 16) == SC_OK,
+        require(sc_init(&tw, algorithm, backend, key2, 16) == SC_OK,
                 "local tweak init");
 
         require(sc_encrypt_block(&ctx, in, ours) == SC_OK, "local ECB");
@@ -122,10 +128,20 @@ static void test_algorithm(sc_algorithm algorithm, const char *ecb,
 }
 
 int main(void) {
-    test_algorithm(SC_AES_128, "AES-128-ECB", "AES-128-CTR",
-                   "AES-128-GCM", "AES-128-XTS");
-    test_algorithm(SC_SM4_128, "SM4-ECB", "SM4-CTR",
-                   "SM4-GCM", "SM4-XTS");
+    static const sc_backend aes_backends[] = {
+        SC_BACKEND_REF, SC_BACKEND_TTABLE, SC_BACKEND_AES_HW, SC_BACKEND_AUTO
+    };
+    static const sc_backend sm4_backends[] = {
+        SC_BACKEND_REF, SC_BACKEND_TTABLE, SC_BACKEND_TTABLE_1K,
+        SC_BACKEND_TTABLE_2K, SC_BACKEND_SHUFFLE, SC_BACKEND_AES_HW,
+        SC_BACKEND_GFNI, SC_BACKEND_SM4_HW, SC_BACKEND_AUTO
+    };
+    for (size_t i = 0; i < sizeof(aes_backends) / sizeof(aes_backends[0]); ++i)
+        test_backend(SC_AES_128, aes_backends[i], "AES-128-ECB",
+                     "AES-128-CTR", "AES-128-GCM", "AES-128-XTS");
+    for (size_t i = 0; i < sizeof(sm4_backends) / sizeof(sm4_backends[0]); ++i)
+        test_backend(SC_SM4_128, sm4_backends[i], "SM4-ECB", "SM4-CTR",
+                     "SM4-GCM", "SM4-XTS");
     printf("PASS: %u OpenSSL 3.6 differential checks (%s)\n",
            checks, OpenSSL_version(OPENSSL_VERSION));
     return 0;

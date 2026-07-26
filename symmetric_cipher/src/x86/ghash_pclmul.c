@@ -38,21 +38,17 @@ static void multiply_vpclmul(__m128i a, __m128i b, __m128i products[3]) {
         _mm256_clmulepi64_epi128(ax, bx, 0x00));
 }
 
-__attribute__((target("pclmul")))
-int sc_x86_ghash_mul(uint8_t x[16], const uint8_t h[16]) {
-    sc_cpu_features features = sc_detect_cpu_features();
-    if (!features.x86_pclmul) return 0;
+static void load_operands(const uint8_t x[16], const uint8_t h[16],
+                          __m128i *a, __m128i *b) {
     uint64_t al = reverse64(sc_load_be64(x));
     uint64_t ah = reverse64(sc_load_be64(x + 8));
     uint64_t bl = reverse64(sc_load_be64(h));
     uint64_t bh = reverse64(sc_load_be64(h + 8));
-    __m128i a = _mm_set_epi64x((long long)ah, (long long)al);
-    __m128i b = _mm_set_epi64x((long long)bh, (long long)bl);
-    __m128i p[3];
-    if (features.x86_vpclmul && features.x86_avx2)
-        multiply_vpclmul(a, b, p);
-    else
-        multiply_pclmul(a, b, p);
+    *a = _mm_set_epi64x((long long)ah, (long long)al);
+    *b = _mm_set_epi64x((long long)bh, (long long)bl);
+}
+
+static void reduce_product(uint8_t x[16], const __m128i p[3]) {
     uint64_t p0[2], p1[2], pc[2];
     _mm_storeu_si128((__m128i *)(void *)p0, p[0]);
     _mm_storeu_si128((__m128i *)(void *)p1, p[1]);
@@ -70,11 +66,47 @@ int sc_x86_ghash_mul(uint8_t x[16], const uint8_t h[16]) {
     z0 ^= q ^ (q << 1) ^ (q << 2) ^ (q << 7);
     sc_store_be64(x, reverse64(z0));
     sc_store_be64(x + 8, reverse64(z1));
+}
+
+__attribute__((target("pclmul")))
+int sc_x86_ghash_mul_pclmul(uint8_t x[16], const uint8_t h[16]) {
+    __m128i a, b, p[3];
+    load_operands(x, h, &a, &b);
+    multiply_pclmul(a, b, p);
+    reduce_product(x, p);
     return 1;
+}
+
+__attribute__((target("avx2,vpclmulqdq")))
+int sc_x86_ghash_mul_vpclmul(uint8_t x[16], const uint8_t h[16]) {
+    __m128i a, b, p[3];
+    load_operands(x, h, &a, &b);
+    multiply_vpclmul(a, b, p);
+    reduce_product(x, p);
+    return 1;
+}
+
+int sc_x86_ghash_mul(uint8_t x[16], const uint8_t h[16]) {
+    sc_cpu_features features = sc_detect_cpu_features();
+    if (features.x86_vpclmul && features.x86_avx2)
+        return sc_x86_ghash_mul_vpclmul(x, h);
+    if (features.x86_pclmul)
+        return sc_x86_ghash_mul_pclmul(x, h);
+    return 0;
 }
 
 #else
 int sc_x86_ghash_mul(uint8_t x[16], const uint8_t h[16]) {
+    (void)x;
+    (void)h;
+    return 0;
+}
+int sc_x86_ghash_mul_pclmul(uint8_t x[16], const uint8_t h[16]) {
+    (void)x;
+    (void)h;
+    return 0;
+}
+int sc_x86_ghash_mul_vpclmul(uint8_t x[16], const uint8_t h[16]) {
     (void)x;
     (void)h;
     return 0;

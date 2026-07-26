@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -13,7 +14,6 @@ import matplotlib.pyplot as plt
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INPUT = ROOT / "results" / "summary" / "native_summary.json"
 OUT = ROOT / "results" / "figures"
 
 COLORS = {
@@ -23,20 +23,22 @@ COLORS = {
     "ttable-2k": "#B279A2",
     "shuffle": "#54A24B",
     "aes-hw": "#E45756",
+    "gfni": "#72B7B2",
+    "sm4-hw": "#FF9DA6",
 }
 
 
-def load_results() -> tuple[dict, list[dict]]:
-    with INPUT.open(encoding="utf-8") as handle:
+def load_results(source: Path) -> tuple[dict, list[dict]]:
+    with source.open(encoding="utf-8") as handle:
         document = json.load(handle)
     return document, document["results"]
 
 
-def save(fig: plt.Figure, stem: str) -> None:
+def save(fig: plt.Figure, stem: str, prefix: str) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     for suffix in ("pdf", "png"):
         fig.savefig(
-            OUT / f"{stem}.{suffix}",
+            OUT / f"{prefix}{stem}.{suffix}",
             dpi=300,
             bbox_inches="tight",
             facecolor="white",
@@ -44,7 +46,9 @@ def save(fig: plt.Figure, stem: str) -> None:
     plt.close(fig)
 
 
-def plot_block_backends(document: dict, rows: list[dict]) -> None:
+def plot_block_backends(
+    document: dict, rows: list[dict], source_name: str, prefix: str
+) -> None:
     selected = [
         row
         for row in rows
@@ -72,16 +76,18 @@ def plot_block_backends(document: dict, rows: list[dict]) -> None:
     ax.text(
         0,
         -0.14,
-        f'Source: native_summary.json; {document["cpu"]}; '
+        f"Source: {source_name}; {document['cpu']}; "
         "3 warmups, 15 samples; key setup excluded.",
         transform=ax.transAxes,
         fontsize=8,
         color="#555555",
     )
-    save(fig, "block_backends_1m")
+    save(fig, "block_backends_1m", prefix)
 
 
-def plot_size_scaling(document: dict, rows: list[dict]) -> None:
+def plot_size_scaling(
+    document: dict, rows: list[dict], source_name: str, prefix: str
+) -> None:
     wanted = {
         ("AES-128", "ref"),
         ("AES-128", "ttable-4k"),
@@ -91,6 +97,8 @@ def plot_size_scaling(document: dict, rows: list[dict]) -> None:
         ("SM4-128", "ttable-1k"),
         ("SM4-128", "ttable-2k"),
         ("SM4-128", "shuffle"),
+        ("SM4-128", "aes-hw"),
+        ("SM4-128", "gfni"),
     }
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), sharey=True, constrained_layout=True)
     for ax, algorithm in zip(axes, ("AES-128", "SM4-128")):
@@ -104,6 +112,8 @@ def plot_size_scaling(document: dict, rows: list[dict]) -> None:
                 and (r["algorithm"], r["backend"]) == pair
             ]
             series.sort(key=lambda r: r["size_bytes"])
+            if not series:
+                continue
             ax.plot(
                 [r["size_bytes"] for r in series],
                 [r["median_gbps"] for r in series],
@@ -124,15 +134,17 @@ def plot_size_scaling(document: dict, rows: list[dict]) -> None:
     fig.text(
         0.01,
         -0.03,
-        f'Source: native_summary.json; {document["cpu"]}; '
+        f"Source: {source_name}; {document['cpu']}; "
         "error bars are reported separately as IQR in JSON.",
         fontsize=8,
         color="#555555",
     )
-    save(fig, "size_scaling")
+    save(fig, "size_scaling", prefix)
 
 
-def plot_modes(document: dict, rows: list[dict]) -> None:
+def plot_modes(
+    document: dict, rows: list[dict], source_name: str, prefix: str
+) -> None:
     selected = [
         r
         for r in rows
@@ -173,20 +185,28 @@ def plot_modes(document: dict, rows: list[dict]) -> None:
     ax.text(
         0,
         -0.14,
-        f'Source: native_summary.json; {document["cpu"]}; '
+        f"Source: {source_name}; {document['cpu']}; "
         "XTS includes tweak generation and ciphertext-stealing-capable path.",
         transform=ax.transAxes,
         fontsize=8,
         color="#555555",
     )
-    save(fig, "mode_throughput")
+    save(fig, "mode_throughput", prefix)
 
 
 def main() -> None:
-    document, rows = load_results()
-    plot_block_backends(document, rows)
-    plot_size_scaling(document, rows)
-    plot_modes(document, rows)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=ROOT / "results" / "summary" / "native_summary.json",
+    )
+    parser.add_argument("--prefix", default="")
+    args = parser.parse_args()
+    document, rows = load_results(args.input)
+    plot_block_backends(document, rows, args.input.name, args.prefix)
+    plot_size_scaling(document, rows, args.input.name, args.prefix)
+    plot_modes(document, rows, args.input.name, args.prefix)
     print(f"Wrote figures to {OUT}")
 
 

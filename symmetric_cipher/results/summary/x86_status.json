@@ -1,20 +1,63 @@
 {
-  "schema": 1,
+  "schema": 2,
   "architecture": "x86_64",
-  "status": "pending_target_machine_execution",
-  "performance_samples": 0,
-  "cycles_per_byte": null,
-  "runtime_backend_instruction_witnesses": [
+  "status": "passed",
+  "platform": "Windows x86_64",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900H",
+  "compiler": "clang-22.1.8 (https://github.com/msys2/MINGW-packages 6e4e79c2f86eeb534e324e583f2057dc9fd5ecab)",
+  "openssl": "OpenSSL 3.6.3 9 Jun 2026",
+  "features": {
+    "aesni": 1,
+    "ssse3": 1,
+    "avx2": 1,
+    "vaes": 1,
+    "pclmul": 1,
+    "vpclmul": 1,
+    "gfni": 1,
+    "vsm4": 0
+  },
+  "tests": {
+    "generic_checks": 2755,
+    "x86_backend_checks": 830,
+    "openssl_differential_checks": 20160,
+    "asan_ubsan": "passed"
+  },
+  "runtime_isa": {
+    "aesni": "pass",
+    "ssse3": "pass",
+    "avx2": "pass",
+    "vaes": "pass",
+    "pclmul": "pass",
+    "vpclmul": "pass",
+    "gfni": "pass",
+    "vsm4": "unsupported"
+  },
+  "static_instruction_witnesses": [
     "AESENC",
     "AESDEC",
     "VAESENC",
     "VAESDEC",
-    "VPSHUFB",
+    "PSHUFB",
     "PCLMULQDQ",
     "VPCLMULQDQ",
     "VGF2P8AFFINEINVQB",
     "VSM4RNDS4",
     "VSM4KEY4"
   ],
-  "note": "Cross-compilation and disassembly pass on the ARM64 development host; no x86 performance values are fabricated."
+  "performance": {
+    "raw_samples": 3240,
+    "summary_rows": 216,
+    "samples_per_case": 15,
+    "cycles_metric": "RDTSCP invariant-TSC ticks per byte",
+    "raw_file": "results/raw/x86_samples.csv",
+    "summary_file": "results/summary/x86_summary.json"
+  },
+  "unsupported": [
+    {
+      "isa": "VSM4",
+      "reason": "The native CPU does not advertise CPUID VSM4 support.",
+      "evidence": "Dispatch rejection plus compile/disassembly witness."
+    }
+  ],
+  "note": "All CPUID-advertised x86 backends passed native execution. VSM4 is not claimed as runtime-verified when unsupported."
 }

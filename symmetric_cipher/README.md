@@ -20,7 +20,7 @@ GIFT-64、TWINE 接到 CTR/GCM/XTS 工作模式。原始 86 页 PPT 已原样保
 | 参考实现 | 显式大端读写、加解密、原地操作、单块/多块统一接口 |
 | T-table | AES 4 KiB；SM4 4 KiB、1 KiB+旋转、2 KiB 重叠读取 |
 | Shuffle/fixslice | ARM NEON `TBL` 的 TWINE 4-bit S 盒/置换、SM4 固定 16 行 S 盒；GIFT 四路 bitslice |
-| 新指令 | ARM `AESE/AESD`、`PMULL`、`TBL` 运行路径；x86 AES-NI/VAES/PSHUFB/GFNI/PCLMUL/VPCLMUL 为实际后端，VSM4/ARM SM4 为运行后端源码与真实函数反汇编见证 |
+| 新指令 | ARM `AESE/AESD`、`PMULL`、`TBL` 运行路径；x86 AES-NI/VAES/PSHUFB/GFNI/PCLMUL/VPCLMUL 已在 i9-13900H 原生执行，VSM4 保留真实后端与反汇编见证 |
 | GFNI | 论文矩阵的标量模型，穷举验证全部 256 个 SM4 S 盒输入 |
 | AES 辅助 SM4 | 常量访问预映射后用 AESE/AESENC 完成 S 盒，四块并行 |
 | CTR | AES、SM4、GIFT-64、TWINE；大端计数器、尾部和回绕检测 |
@@ -29,24 +29,26 @@ GIFT-64、TWINE 接到 CTR/GCM/XTS 工作模式。原始 86 页 PPT 已原样保
 | 分派 | `auto/ref/ttable-4k/ttable-1k/ttable-2k/shuffle/aes-hw/gfni/sm4-hw` |
 
 GCM/XTS 只接受 128-bit 分组的 AES/SM4；GIFT-64 与 TWINE 只接 CTR。
-Apple M2 Pro 不提供 SM4 专用指令，`sm4-hw` 会返回“不支持”，而不是悄悄
-伪装成硬件结果。x86 的性能字段保持 `null`，直到在真实 x86 主机运行。
+Apple M2 Pro 与本次 x86 主机都不提供 SM4 专用指令，`sm4-hw` 会返回“不支持”，
+而不是悄悄伪装成硬件结果。其余 x86 后端已完成原生正确性和性能验证。
 
 ## 一键复现
 
 ```sh
 cd symmetric_cipher
-make test            # KAT、随机/边界测试、OpenSSL 3.6.2 差分
+make test            # KAT、随机/边界测试、OpenSSL 3.6+ 差分
 make test-sanitize   # ASan + UBSan
 make check-x86       # x86 交叉编译、ARM/x86 指令反汇编闸门
+make validate-x86    # x86 真机测试、sanitizer、反汇编、基准和状态文件
 make bench           # 3 次预热、15 次采样、CSV/JSON
 make report          # 图表、中文 LaTeX、最终 PDF
 make all             # 以上全部
 ```
 
-OpenSSL 默认前缀是 `/opt/homebrew/opt/openssl@3`，其他环境可执行
-`make OPENSSL_PREFIX=/path/to/openssl test`。编译默认启用
-`-Wall -Wextra -Wpedantic -Werror`。
+OpenSSL 优先通过 `pkg-config` 定位；没有 `pkg-config` 时回退到
+`/opt/homebrew/opt/openssl@3`，也可用 `OPENSSL_PREFIX` 覆盖。编译默认启用
+`-Wall -Wextra -Wpedantic -Werror`。Windows 原生验证使用 MSYS2 UCRT64
+Clang/LLVM/OpenSSL；sanitizer 使用官方 LLVM Windows 运行库。
 
 命令行后端选择示例：
 
@@ -61,6 +63,8 @@ make build/sc_demo
 
 - `tests/test_symcrypto.c`：官方/论文 KAT、RFC 8998 SM4-GCM、多块/非对齐/
   原地/回绕边界、固定种子随机交叉比较及 256 输入 GFNI 模型验证。
+- `tests/test_x86_backends.c`：直接执行 AES-NI/VAES、SSSE3、GFNI、
+  AES-assisted SM4、PCLMUL/VPCLMUL，并分别与参考实现比较。
 - `tests/test_openssl_diff.c`：AES/SM4 的 ECB、CTR、GCM、XTS 随机差分；
   AES-XTS 还比较 63-byte CTS。
 - `build/x86/runtime.disasm`：由 `check-x86` 生成并检查实际后端中的
@@ -70,6 +74,10 @@ make build/sc_demo
   `AESE/AESD/TBL/SM4E/SM4EKEY`。
 - `results/raw/native_samples.csv`：每个正式样本；不只保存汇总数。
 - `results/summary/native_summary.json`：median、Q1/Q3、IQR、GB/s、ns/byte。
+- `results/raw/x86_samples.csv` 与 `results/summary/x86_summary.json`：3240 个
+  x86 原始样本、216 条汇总，以及每条样本的 RDTSCP TSC ticks/byte。
+- `results/summary/x86_status.json`：CPU 特征、测试计数、ISA 原生执行状态和
+  VSM4 不支持原因。
 - `results/summary/object_sizes.csv` 与 `table_sizes.csv`：对象和表尺寸。
 - `output/pdf/symmetric_cipher_software_optimization.pdf`：中文完整报告。
 
@@ -82,8 +90,8 @@ tests/              KAT、随机/边界、OpenSSL 差分
 bench/              六档消息长度基准
 scripts/            ISA 检查、绘图、报告构建
 materials/          原始 PPT 与 86 页映射
-results/raw/        逐样本 CSV
-results/summary/    机器可读汇总与尺寸
+results/raw/        ARM/x86 逐样本 CSV
+results/summary/    ARM/x86 机器可读汇总、验收状态与尺寸
 results/figures/    从 JSON 生成的 PDF/PNG 图
 report/             中文 LaTeX 源码
 output/pdf/         最终 PDF
@@ -91,10 +99,12 @@ output/pdf/         最终 PDF
 
 ## 实现边界
 
-- ARM64 数据来自本机 Apple M2 Pro。x86 仅做交叉编译、反汇编与纯标量模型
-  验证；没有真实 x86 主机时不填写 cycles/byte 或吞吐量。
-- `SM4E/SM4EKEY` 与 Intel `VSM4*` 是编译/指令生成检查，M2 Pro 运行时
-  显示 `SKIP: unsupported hardware`。
+- ARM64 数据来自 Apple M2 Pro；x86 数据来自 Windows x86-64 上的
+  Intel Core i9-13900H。两组数据分开保存，不脱离平台直接比较。
+- i9-13900H 原生执行 AES-NI、VAES、SSSE3、GFNI、PCLMUL 和 VPCLMUL。
+  它不支持 VSM4，因此运行时明确跳过，只保留 VSM4 编译/反汇编证据。
+- x86 的 `cycles_per_byte` 字段实际表示序列化 RDTSCP 得到的 invariant-TSC
+  ticks/byte，不等同于随睿频变化的物理核心时钟周期。
 - NEON/SSSE3 SM4 shuffle 固定扫描 16 行 S 盒，并以四块并行摊薄装配开销；
   其价值仍是对照“常量时间”和“最高吞吐”不是同一目标。
 - CTR 八路生成计数器，GCM 四块聚合 GHASH，XTS 八路生成 tweak；回绕在写

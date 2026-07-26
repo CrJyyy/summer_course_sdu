@@ -10,10 +10,21 @@ static uint32_t sm4_l(uint32_t x) {
 
 __attribute__((target("gfni"), noinline))
 static __m128i sm4_sub(__m128i x) {
-    const __m128i a1 = _mm_set1_epi64x(INT64_C(0x5d50221ab97d284c));
-    const __m128i a2 = _mm_set1_epi64x(INT64_C(0x89b5a674a934abf3));
+    /*
+     * GF2P8AFFINE interprets matrix bytes from the most significant byte
+     * toward the least significant byte.  These constants are therefore the
+     * byte-reversed encodings of the row arrays used by gfni_model.c.
+     */
+    const __m128i a1 = _mm_set1_epi64x(INT64_C(0x4c287db91a22505d));
+    const __m128i a2 = _mm_set1_epi64x(INT64_C(0xf3ab34a974a6b589));
     x = _mm_gf2p8affine_epi64_epi8(x, a1, 0x3e);
     return _mm_gf2p8affineinv_epi64_epi8(x, a2, 0xd3);
+}
+
+__attribute__((target("gfni")))
+uint8_t sc_x86_sm4_gfni_sbox_byte(uint8_t x) {
+    __m128i v = sm4_sub(_mm_set1_epi8((char)x));
+    return (uint8_t)_mm_cvtsi128_si32(v);
 }
 
 __attribute__((target("gfni")))
@@ -65,6 +76,9 @@ void sc_x86_sm4_encrypt4_gfni(const sc_sm4_key *key, const uint8_t in[64],
 }
 
 #else
+uint8_t sc_x86_sm4_gfni_sbox_byte(uint8_t x) {
+    return sc_sm4_gfni_scalar_model(x);
+}
 void sc_x86_sm4_encrypt_gfni(const sc_sm4_key *key, const uint8_t in[16],
                              uint8_t out[16]) {
     sc_sm4_encrypt_ref(key, in, out);
