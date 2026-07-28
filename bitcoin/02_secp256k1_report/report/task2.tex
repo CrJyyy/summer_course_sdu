@@ -11,7 +11,9 @@
 \usepackage{fancyhdr}
 \usepackage{hyperref}
 \usepackage{enumitem}
+\usepackage{seqsplit}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!65!black,citecolor=blue!55!black}
@@ -45,7 +47,12 @@ Bitcoin 使用 secp256k1 椭圆曲线完成交易授权。其安全性不仅依�
 \end{abstract}
 
 \clearpage
+\begingroup
+\footnotesize
+\setlength{\parskip}{0pt}
+\linespread{0.88}\selectfont
 \tableofcontents
+\endgroup
 \clearpage
 
 \section{研究对象、证据与方法}
@@ -59,6 +66,26 @@ Bitcoin 使用 secp256k1 椭圆曲线完成交易授权。其安全性不仅依�
 \end{enumerate}
 
 研究基线固定为表 \ref{tab:tag-commits} 所列 tag，而不是随时间移动的 master。脚本从本地官方 Git 仓库执行 \texttt{git rev-parse} 和 \texttt{git show} 生成 \texttt{tag\_commits.csv}；因此版本、commit 与日期不是人工抄写的常量。安全修复以修复前/后的 tag 构建，性能案例则以相同版本不同 CMake 参数做受控比较。
+
+\subsection{从结论到证据的追溯规则}
+
+本文把证据强度分为“本机直接测得”“固定源码直接观察”和“上游平台特有结论”三类。前两类可以在本目录内重建；第三类由于缺少相同 CPU、GCC 版本或微架构，只能引用官方 PR/CHANGELOG。表 \ref{tab:evidence-levels} 给出具体判据，避免把“成功编译”误写成“侧信道已被本机复现”，或把一次微基准误写成整个 Bitcoin 节点的端到端性能。
+
+\begin{table}[htbp]
+\centering
+\caption{本文采用的证据分级与表述边界}
+\label{tab:evidence-levels}
+\begin{tabular}{p{0.20\textwidth}p{0.34\textwidth}p{0.36\textwidth}}
+\toprule
+证据级别 & 可支持的结论 & 不能据此推出 \\
+\midrule
+本机 build/CTest & 指定 tag 在 ARM64/Clang 17 Release 下可构建，官方功能测试通过 & 任意编译器生成代码均 constant-time \\
+本机 10 轮 benchmark & 同机同配置下 \texttt{ecdsa\_sign} 的 median、IQR 和相对差异 & 钱包、节点或网络吞吐量提高相同比例 \\
+固定 tag 源码/commit & 函数、宏、参数和算法在指定版本中的实际变化 & 该变化在所有 CPU 上具有同样性能收益 \\
+官方 PR/CHANGELOG & x86\_64/GCC 10.5 或 GCC 13.1 等上游复现结果 & 本机 ARM64 已直接复现相同汇编或 timing 行为 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begingroup
 \setlength{\tabcolsep}{3pt}
@@ -139,6 +166,16 @@ x=X/Z^2,\qquad y=Y/Z^3
 \]
 表示同一个仿射点，把点乘循环中的大量求逆替换为有限域乘法与平方，只在最终归一化时求逆。这里 field limb 是对模 $p$ 坐标的机器字分块，scalar limb 则是对模 $n$ 整数的分块；两套 reduction、边界与 constant-time 条件不能互换。
 
+\paragraph{为什么 $p$ 与 $n$ 必须分开。}
+点坐标方程和斜率中的逆元都在 $\mathbb{F}_p$ 中计算；签名方程的 $d,k,r,s,e$ 则在 $\mathbb{Z}_n$ 中计算。$x(R)$ 首先是 $[0,p-1]$ 的域元素，ECDSA 再取 $r=x(R)\bmod n$，所以这里存在一次从 field 到 scalar 的显式转换。若用 $p$ 代替 $n$ 计算 $s$，点仍可能位于曲线上，但签名验证方程不成立；若用 $n$ 约简坐标，则连曲线群运算本身都被改变。这也是源码将 \texttt{secp256k1\_fe} 与 \texttt{secp256k1\_scalar} 设计为不同类型和 backend 的原因。
+
+\paragraph{压缩公钥恢复。}
+压缩公钥保存 1-byte 奇偶前缀与 32-byte $x$。由于 $p\equiv3\pmod4$，可由
+\[
+y=\left(x^3+7\right)^{(p+1)/4}\bmod p
+\]
+得到一个平方根，再按前缀选择 $y$ 或 $p-y$。Task 2 的伪造复现实验正是这样从 Task 1 的公开压缩公钥恢复点 $P$，脚本中没有读取或保存对应私钥。
+
 \subsection{ECDSA 签名与验证}
 
 对消息 $m$，先定义 $e=H(m)$（按协议规则解释或截断）。签名者选择秘密 nonce $k\in\mathbb{Z}_n^*$：
@@ -164,6 +201,8 @@ k=(e_1-e_2)(s_1-s_2)^{-1}\bmod n,
 \quad d=(s_1k-e_1)r^{-1}\bmod n.
 \]
 库默认使用 RFC6979-style derandomized nonce，并对 secret-key 操作追求 constant-time 与 constant-memory-access。
+
+签名还必须检查 $r\ne0$、$s\ne0$；若出现零值就更换 nonce。数学上 $(r,s)$ 与 $(r,n-s)$ 都能通过 ECDSA 方程，因为二者对应纵坐标相反的点。Bitcoin 标准策略与 libsecp256k1 的 normalized signature 接口使用 low-S 表示来减少可塑性。这里 low-S 是编码规范化，不改变“验证器必须自己确定 $e$”这一消息绑定前提。
 
 \subsection{为什么验证可以 variable-time，而签名不可以}
 
@@ -196,6 +235,34 @@ s'^{-1}(e'G+r'P)
 
 这一边界也直接写在官方 API 文档中。\texttt{v0.5.1/include/secp256k1.h} 的 ECDSA verify 注释要求 verifier 自己对消息应用密码学哈希、不得直接接受外部 \texttt{msghash32}，否则无需知道私钥也容易构造“有效”签名。也就是说，课件推导不是脱离实现的理论提醒，而是库接口明确要求调用者承担的安全前置条件。
 
+\subsection{可执行复现：只伪造攻击者选择的摘要}
+
+\texttt{scripts/forge\_digest\_demo.py} 使用 Task 1 已公开的压缩公钥，不包含私钥。脚本实现有限域点加、double-and-add 标量乘法和 ECDSA digest verification，固定选择 $u=\texttt{0x12345}$、$v=\texttt{0x6789a}$，随后直接按课件公式构造 $r',s',e'$。关键代码见清单 \ref{lst:forge-demo}。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=90,
+  lastline=112,
+  firstnumber=90,
+  caption={\texttt{forge\_digest\_demo.py}：从公开公钥和 $u,v$ 构造可验证摘要与签名},
+  label={lst:forge-demo}
+]{../scripts/forge_digest_demo.py}
+
+实际运行生成 \texttt{results/forgery\_demo.json}。核心结果为
+\begin{align*}
+r'&=\texttt{\seqsplit{c112f16c4ceb476cfc9186a95a134f2787cc0302df91716f017ee03d9d29dc25}},\\
+s'&=\texttt{\seqsplit{0959104f04009a0e9ff14754cf675b312ecb5d779ba33969eaa4c3c00b7b38b5}},\\
+e'&=\texttt{\seqsplit{c28b36d8c34825c0601da19e638489f5d0c65a53bb0a23f7ee1aba9248ca32a7}}.
+\end{align*}
+\texttt{chosen\_digest\_verifies=true}，证明验证器若信任调用者给出的 $e'$ 就会接受；但固定消息 \texttt{course project fixed message} 的 SHA256 为
+\[
+\texttt{\seqsplit{a08f44448d8af4f6d471826c1f757f743760031871006ee60f1ac5727d5b2cd4}},
+\]
+相同 $(r',s')$ 对它得到 \texttt{fixed\_message\_verifies=false}。这一正反对照把攻击边界具体化：攻击者能选择“签名所对应的摘要”，却不能把它移植到预先指定的消息。
+
 \section{Bitcoin 如何绑定被签内容}
 
 Bitcoin 的签名不是对 explorer 展示文本签名，而是对严格序列化的 transaction digest 签名。不同脚本版本使用不同 sighash 规则：
@@ -207,6 +274,30 @@ Bitcoin 的签名不是对 explorer 展示文本签名，而是对严格序列�
 \end{itemize}
 
 节点从交易和被花费输出自行重建 digest，不接受交易发送者随意声明“这个 hash 对应某消息”。因此上述 $e'$ 技巧不能把任意伪造签名附着到一笔指定的有效 Bitcoin 花费上。
+
+\subsection{以 SegWit v0 为例的消息绑定链}
+
+对 \texttt{SIGHASH\_ALL}，BIP143 预映像不仅含当前输入，还通过三个 double-SHA256 聚合值承诺所有 outpoint、sequence 和 outputs。当前输入部分再显式写入 outpoint、scriptCode、被花费金额与 sequence，最后加入 locktime 和 4-byte sighash type。其安全意义可按字段拆分：
+
+\begin{table}[htbp]
+\centering
+\caption{BIP143 \texttt{SIGHASH\_ALL} 字段与防篡改语义}
+\label{tab:bip143-binding}
+\begin{tabular}{p{0.25\textwidth}p{0.29\textwidth}p{0.36\textwidth}}
+\toprule
+预映像字段 & 承诺内容 & 若未绑定可能出现的问题 \\
+\midrule
+\texttt{hashPrevouts} & 全部输入引用的 TXID/vout & 将签名移到另一组 UTXO \\
+\texttt{hashSequence} & 全部输入 sequence & 改变 RBF 或相对锁定语义 \\
+当前 outpoint/scriptCode & 正在验证的 UTXO 与花费条件 & 用另一种 locking condition 解释同一签名 \\
+当前输入 amount & 被花费金额 & 离线签名器无法检测主机谎报输入金额 \\
+\texttt{hashOutputs} & 全部输出金额与 scriptPubKey & 替换收款人或找零 \\
+version/locktime/type & 交易版本、绝对锁定和签名模式 & 改变整体交易语义或承诺范围 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+节点获得交易、前序输出和正在执行的 Script 上下文后，按共识规则重新序列化这些字段并计算 $e$。攻击者即使有上一节构造的 $(r',s',e')$，也必须让这套规范序列化的 double-SHA256 恰好等于 $e'$；在哈希预映像抗性假设下不可行。Task 1 已对真实 P2WPKH 交易执行这一重建，因而两个任务在“公式、代码和链上实例”三个层面相互闭合。
 
 Schnorr 采用形如 $sG=R+eP$ 的线性验证关系，便于 multisignature 与 batch verification；BIP340 通过 key prefixing、唯一 x-only 编码和 tagged hashing 防止相关构造中的歧义。它与 ECDSA 使用同一曲线，但签名方程和安全证明不同。
 
@@ -260,6 +351,34 @@ z=(x\land \neg m)\lor(y\land m),
 
 v0.3.1 的 PR \#1257 明确记录 Clang 15 对 field element cmov 的这种重写。将条件经 volatile 读取能限制某些优化，但它仍是工程防线而非语言级证明。因此项目随后增加对开发版 GCC/Clang、Valgrind/内存检查、无额外 VERIFY 的 production-like tests，并持续检查生成代码。
 
+\begin{figure}[htbp]
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[
+  node distance=8mm and 9mm,
+  stage/.style={draw=black!70,rounded corners=2pt,fill=blue!5,
+    minimum height=9mm,text width=2.8cm,align=center,font=\small},
+  risk/.style={stage,fill=orange!10,draw=orange!65!black},
+  safe/.style={stage,fill=green!8,draw=green!45!black},
+  flow/.style={-{Latex[length=2.2mm]},thick,draw=black!75}
+]
+  \node[stage] (source) {branch-free C\\mask/cmov};
+  \node[risk, right=of source] (optimizer) {编译器优化\\识别二选一语义};
+  \node[risk, right=of optimizer] (machine) {机器码 branch\\或 secret-indexed load};
+  \node[risk, right=of machine] (leak) {timing/cache 观测\\与 secret 相关};
+  \node[safe, below=of optimizer] (defense) {volatile barrier\\多工具链 CI};
+  \node[safe, right=of defense] (audit) {功能测试 + 汇编审计\\+ side-channel 工具};
+  \draw[flow] (source) -- (optimizer);
+  \draw[flow] (optimizer) -- (machine);
+  \draw[flow] (machine) -- (leak);
+  \draw[flow] (optimizer) -- (defense);
+  \draw[flow] (defense) -- (audit);
+\end{tikzpicture}%
+}
+\caption{constant-time 回归的因果链：功能等价的编译器优化仍可能改变可观测时间行为}
+\label{fig:constant-time-chain}
+\end{figure}
+
 \subsection{v0.3.1：field/scalar cmov 的修复证据}
 
 下面是固定 tag 中 \texttt{src/field\_5x52\_impl.h} 的关键差异；其余 limb 的 select 逻辑不变。
@@ -275,9 +394,10 @@ mask1 = ~mask0;
 \end{lstlisting}
 当 flag 为 0 时，\texttt{mask0} 为全 1、保留原值；flag 为 1 时，\texttt{mask1} 为全 1、选择新值。问题不在这个代数掩码的功能正确性，而在优化器可能识别“二选一”语义并生成 secret-dependent branch 或 load。volatile 读取为该编译器优化建立屏障，使后续 bitwise select 保持预期形态。相同策略同步用于不同 field/scalar backend，而不是只修一个架构文件。
 
+\newpage
 \subsection{v0.3.2：GCC 13.1 ECDH 路径的扩大修复}
 
-v0.3.2 继续检查不叫 \texttt{cmov}、但同样由秘密 flag 控制的辅助函数。例如 \texttt{scalar\_cond\_negate} 从
+v0.3.2 继续检查不叫 \texttt{cmov}、但同样由秘密 flag 控制的辅助函数。例如 \texttt{scalar\_cond\_negate} 的前后差异如下。
 \begin{lstlisting}[language=C,caption={v0.3.1 到 v0.3.2 的 conditional negate 变化}]
 /* v0.3.1 */
 uint64_t mask = !flag - 1;
@@ -301,6 +421,9 @@ timing side-channel 需要攻击者获得足够精细、重复的时间或微架
 验证需要 $aP+bG$。库综合使用 wNAF、对固定生成元 $G$ 的大窗口预计算、Shamir's trick 和 secp256k1 endomorphism，将两个点乘合并并把部分 scalar 分裂为较短分量。模逆采用 safegcd 及其 variable-time 变体：secret-dependent 路径必须用 constant-time 版本；公开验证数据可使用 variable-time 版本换取速度。
 
 wNAF 把 scalar 表示成稀疏的有符号奇数 digit，使非零项之间至少相隔若干位，从而减少点加法；Shamir's trick 在一次从高位到低位的扫描中联合计算 $aP+bG$，复用 doubling。secp256k1 还存在高效 endomorphism $\phi(P)=\lambda P$，可把 256-bit scalar 分解为两个约 128-bit 分量并行处理。fixed-base $kG$ 与 variable-base $kP$ 的区别在于 $G$ 永远固定，因而可以在编译期投入更大预计算表；任意 $P$ 则必须现场建立小表或使用不同算法。
+
+\paragraph{safegcd modular inverse。}
+ECDSA signing 需要 $k^{-1}\bmod n$，verification 需要 $s^{-1}\bmod n$，Jacobian 点最终转回 affine 也涉及域逆。朴素扩展欧几里得算法的迭代次数依赖输入，不适合秘密 scalar；费马小定理幂运算可固定模式但乘法数量较高。libsecp256k1 的 safegcd 路径使用有界 divsteps 和适合 limb 表示的矩阵更新；秘密路径采用 constant-time 版本，公开验证数据则允许 variable-time 版本提前结束。这再次说明同一个数学操作会因输入是否保密而选择不同实现。
 
 \subsection{v0.4.1：删除 handwritten x86\_64 assembly}
 
@@ -370,6 +493,156 @@ R&=\operatorname{comb}(d,G/2)+\textit{ge\_offset}.
 
 2 KiB 配置节省静态空间，但必须执行 25 次倍点；22 KiB 大幅减少 doubling，并把点加从 52 次降至 44 次；86 KiB 用 1,376 个预计算点把 spacing 降到 1，消除循环中的倍点，但 cmov 扫描和 cache footprint 更大，所以相对 22 KiB 的边际收益小于 2 到 22 KiB 的跃迁。这是可由源码参数解释的时间--空间权衡，而不只是 benchmark 表面相关性。算法来源可追溯到 Hamburg 的 compact elliptic-curve multiplication 工作\cite{hamburg}。
 
+\section{复现实验脚本的技术实现}
+
+\subsection{从命令参数到可复现产物}
+
+\texttt{scripts/reproduce.py} 将元数据、构建、库大小和 benchmark 组织为显式 case，而不是把一次终端操作后的文件手工搬入报告。清单 \ref{lst:task2-main} 展示顶层调度：除单独的 \texttt{sizes} 外，流程先确保固定 tag/worktree 存在并重新收集 tag commit、环境和版本 diff；\texttt{build/all} 执行七套构建，其他 case 读取已有 build matrix；库大小始终在 benchmark 之前生成，\texttt{benchmark/all} 才执行重复测量。
+
+\begin{figure}[!htbp]
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[
+  node distance=8mm and 9mm,
+  stage/.style={
+    draw=black!70, rounded corners=2pt, fill=blue!5,
+    minimum height=9mm, text width=2.7cm, align=center, font=\small
+  },
+  check/.style={
+    stage, fill=orange!10, draw=orange!65!black
+  },
+  artifact/.style={
+    stage, fill=green!8, draw=green!45!black
+  },
+  flow/.style={-{Latex[length=2.2mm]}, thick, draw=black!75}
+]
+  \node[stage] (case) {\texttt{--case}\\参数与运行次数};
+  \node[stage, right=of case] (metadata) {固定 tag/worktree\\环境与 commit};
+  \node[stage, right=of metadata] (build) {七套 Clang Release\\独立 build tree};
+  \node[check, right=of build] (ctest) {官方 CTest\\非零退出即终止};
+
+  \node[stage, below=of ctest] (sizes) {定位真实库文件\\bytes/KiB};
+  \node[stage, left=of sizes] (select) {筛选四套\\性能配置};
+  \node[stage, left=of select] (warmup) {每组预热 2 次\\不进入统计};
+  \node[stage, left=of warmup] (runs) {正式运行 10 次\\保留原始 stdout};
+
+  \node[stage, below=of runs] (stats) {median、IQR\\ops/s};
+  \node[artifact, right=of stats, text width=3.4cm] (data) {CSV/JSON、构建日志\\逐次 benchmark 日志};
+  \node[artifact, right=of data, text width=3.4cm] (report) {LaTeX 表格与图表\\可从数据重新生成};
+
+  \draw[flow] (case) -- (metadata);
+  \draw[flow] (metadata) -- (build);
+  \draw[flow] (build) -- (ctest);
+  \draw[flow] (ctest) -- (sizes);
+  \draw[flow] (sizes) -- (select);
+  \draw[flow] (select) -- (warmup);
+  \draw[flow] (warmup) -- (runs);
+  \draw[flow] (runs) -- (stats);
+  \draw[flow] (stats) -- (data);
+  \draw[flow] (data) -- (report);
+\end{tikzpicture}%
+}
+\caption{Task 2 的 case 驱动复现流水线：测试、库大小和性能数据均由同一脚本生成}
+\label{fig:task2-reproduction-flow}
+\end{figure}
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=361,
+  lastline=381,
+  firstnumber=361,
+  caption={\texttt{reproduce.py}：不同 case 共用的顶层复现流程},
+  label={lst:task2-main}
+]{../scripts/reproduce.py}
+
+这一结构解决了两类可复现性问题。第一，报告不依赖当前 Git 分支：\texttt{ensure\_repo} 为每个固定 tag 建立 detached worktree，\texttt{collect\_metadata} 再由 Git 写出 tag/commit 对照。第二，\texttt{sizes} 必须读取 \texttt{build\_matrix.json} 并验证四个性能 build 均存在，缺少配置时明确失败，不会静默输出不完整 CSV。
+
+\begin{table}[htbp]
+\centering
+\caption{复现脚本产物与报告结论的对应关系}
+\label{tab:task2-artifacts}
+\begin{tabular}{p{0.30\textwidth}p{0.28\textwidth}p{0.32\textwidth}}
+\toprule
+产物 & 生成阶段 & 在报告中的用途 \\
+\midrule
+\texttt{tag\_commits.csv/json} & metadata & 固定 tag、commit、日期与版本边界 \\
+\texttt{build\_matrix.json} & build & 记录七套配置、测试日志路径和用途 \\
+\texttt{raw/ctest\_*.txt} & build & 证明每套官方测试的实际退出结果 \\
+\texttt{benchmark\_runs.csv} & benchmark & 保存 40 个正式样本，不用汇总值替代原始数据 \\
+\texttt{benchmark\_summary.csv} & benchmark & median、$Q_1$、$Q_3$、IQR 与 ops/s \\
+\texttt{library\_sizes.csv/json} & sizes/build/all & 从真实库 artifact 自动生成 bytes/KiB \\
+\texttt{forgery\_demo.json} & forge demo & 保存攻击者选择摘要成功、固定消息失败的正反结果 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{同配置构建、CTest 与原始日志}
+
+清单 \ref{lst:task2-build} 给出每套 build 的实际 CMake 参数。source 和 build 目录按 tag/variant 分离；编译器固定为 Clang，构建类型固定为 Release，所有配置启用官方 tests，而 benchmark 只为四套性能配置开启。configure、build、CTest 三步均使用 \texttt{check=True}，任一步非零退出都会终止流程，同时把已有输出写入对应日志供定位。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=154,
+  lastline=183,
+  firstnumber=154,
+  caption={\texttt{reproduce.py}：Clang Release 构建与官方 CTest},
+  label={lst:task2-build}
+]{../scripts/reproduce.py}
+
+七个配置由 \texttt{SECURITY\_TEST\_CONFIGS + BENCHMARK\_CONFIGS} 统一驱动。前三个 tag 只验证修复前后的可构建性与官方测试；后四个配置才进入性能样本，因而不会把安全版本的不同代码基线误混为预计算表对照。
+
+\subsection{预热、重复测量与统计汇总}
+
+benchmark 执行前把 \texttt{SECP256K1\_BENCH\_ITERS} 固定为 20,000。清单 \ref{lst:task2-bench-runs} 先执行指定次数的预热但不记录，再为每次正式运行保存完整 stdout，并同时记录官方 \texttt{ecdsa\_sign} 行、外部 wall time 和 benchmark binary size。即使后续统计脚本出现问题，原始输出仍能独立复查。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=262,
+  lastline=287,
+  firstnumber=262,
+  caption={\texttt{reproduce.py}：预热、10 次正式运行与逐次记录},
+  label={lst:task2-bench-runs}
+]{../scripts/reproduce.py}
+
+汇总阶段按 tag/variant 分组，使用 Python 标准库的 inclusive quartiles 与 median，直接生成报告引用的 median、$Q_1$、$Q_3$、IQR 和 ops/s，如清单 \ref{lst:task2-statistics}。这里没有先四舍五入逐次数据；表格中的显示精度只在报告层处理。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=292,
+  lastline=315,
+  firstnumber=292,
+  caption={\texttt{reproduce.py}：由逐次数据生成 median/IQR/ops/s},
+  label={lst:task2-statistics}
+]{../scripts/reproduce.py}
+
+\subsection{自动生成库大小结果}
+
+库大小不能由报告作者观察 Finder 后手工填写。脚本递归寻找 \texttt{libsecp256k1} 动态库，明确排除符号链接；没有动态库时才回退到静态库，并选择实际文件而不是 symlink 名称。清单 \ref{lst:task2-library-size} 把 tag、variant、CMake 表配置、相对 artifact 路径、bytes 和 KiB 同时写入 CSV/JSON。于是删除 build tree 后执行一次 \texttt{--case all}，即可从构建产物重新生成报告中的全部大小数字。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=212,
+  lastline=237,
+  firstnumber=212,
+  caption={\texttt{reproduce.py}：从真实构建产物生成 \texttt{library\_sizes.csv}},
+  label={lst:task2-library-size}
+]{../scripts/reproduce.py}
+
 \section{本机复现实验}
 
 \subsection{方法}
@@ -405,14 +678,14 @@ v0.5.0 86 KiB & 大预计算表 & 3/3 passed \\
 \begin{table}[htbp]
 \centering
 \caption{Apple ARM64/Clang 17 的 ECDSA signing 结果}
-\begin{tabular}{lrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-配置 & Median ($\mu$s) & IQR ($\mu$s) & ops/s & dylib bytes \\
+配置 & $Q_1$ & Median & $Q_3$ & IQR & ops/s & dylib bytes \\
 \midrule
-v0.4.1 default & 28.4 & 0.25 & 35,211 & 1,336,120 \\
-v0.5.0 2 KiB & 27.8 & 0.15 & 35,971 & 1,270,344 \\
-v0.5.0 22 KiB & 25.2 & 0.20 & 39,683 & 1,286,856 \\
-v0.5.0 86 KiB & 24.6 & 0.10 & 40,650 & 1,352,904 \\
+v0.4.1 default & 28.225 & 28.4 & 28.475 & 0.25 & 35,211 & 1,336,120 \\
+v0.5.0 2 KiB & 27.725 & 27.8 & 27.875 & 0.15 & 35,971 & 1,270,344 \\
+v0.5.0 22 KiB & 25.100 & 25.2 & 25.300 & 0.20 & 39,683 & 1,286,856 \\
+v0.5.0 86 KiB & 24.500 & 24.6 & 24.600 & 0.10 & 40,650 & 1,352,904 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -447,7 +720,14 @@ v0.5.0 86 KiB & 24.6 & 0.10 & 40,650 & 1,352,904 \\
 
 library size 也由同一个 \texttt{reproduce.py} 自动生成：脚本在每个 build tree 中排除符号链接，定位实际 \texttt{libsecp256k1} 动态库并写入 bytes/KiB、tag 和 table 配置。这样删除 \texttt{work/builds} 后执行一次 \texttt{--case all}，能重新产生 build/test 日志、逐次 benchmark、统计汇总和 \texttt{library\_sizes.csv}，避免报告中出现不可追溯的手填大小。
 
+\subsection{结果解释：算法收益与测量噪声}
+
+\texttt{v0.4.1} 的第 3 轮为 31.2 $\mu$s，明显高于其余多数 28.0--28.6 $\mu$s 样本；median 仍为 28.4 $\mu$s，而均值会被该调度尖峰向上拉动。三种 \texttt{v0.5.0} 配置的 IQR 分别为 0.15、0.20 和 0.10 $\mu$s，说明中间 50\% 样本较集中。报告保留这条较慢样本，没有为了得到更漂亮的图而删除 outlier。
+
+受控性最强的比较是同一 \texttt{v0.5.0} tag 的 2/22/86 KiB：源代码版本、编译器、构建类型和 benchmark binary size 均相同，主要自变量是 \texttt{SECP256K1\_ECMULT\_GEN\_KB}。2 KiB 到 22 KiB 的 median 下降 2.6 $\mu$s，对应算法参数中 25 次 doubling 降为 3 次；22 KiB 到 86 KiB 只再下降 0.6 $\mu$s，同时动态库增加约 64.5 KiB。因而“更大表更快”不是线性规律，超过 22 KiB 后收益已呈明显递减。
+
 \section{正确性、性能与 constant-time 的关系}
+\enlargethispage{2\baselineskip}
 
 三项目标不能互相替代：
 
@@ -465,6 +745,7 @@ library size 也由同一个 \texttt{reproduce.py} 自动生成：脚本在每�
 
 此外，macOS 动态调频、温度、后台调度与 cache 状态仍可能影响微秒级测量。相同机器、相同工具链、预热、重复运行和 median/IQR 只能降低而不能消除这些因素。三种 v0.5.0 表大小之间的受控比较最强；跨 tag 的总库大小与运行时间还叠加其他源代码变化，解释时应保持这一因果边界。
 
+\enlargethispage{2\baselineskip}
 \section{结论}
 
 课件的伪造推导揭示了一个通用原则：签名验证必须重新建立“消息语义 $\rightarrow$ 规范序列化 $\rightarrow$ digest $\rightarrow$ signature”的完整链条。Bitcoin 的 sighash 正是该绑定，而不是让交易发送者自由声明 digest。
@@ -481,10 +762,13 @@ python3 -m venv .venv
 PATH="$PWD/.venv/bin:$PATH" \
   .venv/bin/python scripts/reproduce.py \
   --case all --runs 10 --warmups 2
+
+.venv/bin/python scripts/forge_digest_demo.py
 \end{lstlisting}
 
-逐次数据位于 \texttt{results/benchmark\_runs.csv}，汇总位于 \texttt{results/benchmark\_summary.csv}；动态库与预计算表配置的大小位于 \texttt{results/library\_sizes.csv}。环境、tag commit、case commit、build/test 原始日志和版本区间 diffstat 均保存在 \texttt{results/}。上游源码与 build tree 位于被忽略的 \texttt{work/}，删除后可由脚本重建。若已有 build tree，可运行 \texttt{--case sizes} 单独重建库大小 CSV/JSON；\texttt{--case all} 会在构建后自动生成它们。
+逐次数据位于 \texttt{results/benchmark\_runs.csv}，汇总位于 \texttt{results/benchmark\_summary.csv}；动态库与预计算表配置的大小位于 \texttt{results/library\_sizes.csv}，摘要伪造正反结果位于 \texttt{results/forgery\_demo.json}。环境、tag commit、case commit、build/test 原始日志和版本区间 diffstat 均保存在 \texttt{results/}。上游源码与 build tree 位于被忽略的 \texttt{work/}，删除后可由脚本重建。若已有 build tree，可运行 \texttt{--case sizes} 单独重建库大小 CSV/JSON；\texttt{--case all} 会在构建后自动生成它们。
 
+\clearpage
 \begin{thebibliography}{20}
 \bibitem{secpreadme} Bitcoin Core, \emph{libsecp256k1 README}. \url{https://github.com/bitcoin-core/secp256k1}
 \bibitem{changelog} Bitcoin Core, \emph{libsecp256k1 CHANGELOG}. \url{https://github.com/bitcoin-core/secp256k1/blob/master/CHANGELOG.md}

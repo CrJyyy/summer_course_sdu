@@ -245,7 +245,7 @@ x86 VAES 八块实现位于 [`src/x86/aes_vaes.c`](src/x86/aes_vaes.c)：
   - 使用 affine、有限域求逆和 inverse-affine 指令构造 SM4 S 盒。
 - [`tests/test_symcrypto.c`](tests/test_symcrypto.c) 的 `test_gfni_model`：穷举 0～255，逐项和标准 SM4 S 盒比较。
 
-### 6.4 专用 SM4 指令
+### 6.4 专用 SM4 指令适配
 
 - ARM：[`src/arm64/sm4_hw_arm64.c`](src/arm64/sm4_hw_arm64.c)
   - `sc_arm_sm4_setkey_hw`：`SM4EKEY`；
@@ -254,7 +254,12 @@ x86 VAES 八块实现位于 [`src/x86/aes_vaes.c`](src/x86/aes_vaes.c)：
   - `sc_x86_sm4_encrypt8_hw`：`VSM4RNDS4` 八块路径；
   - `sc_x86_sm4_key4_hw`：`VSM4KEY4`。
 
-Apple M2 Pro 没有 SM4E，因此本机运行时应返回 `SC_ERR_UNSUPPORTED`/显示 SKIP；代码仍被目标 ISA 编译并检查反汇编。x86 VSM4 同样已有真实加密函数，但吞吐率需要具备该 ISA 的 x86 目标机实测。当前 x86 `sc_init` 使用经过测试的标量密钥扩展生成轮密钥，`sc_x86_sm4_key4_hw` 用于验证 `VSM4KEY4` 的编译与指令生成，尚未接入 `sc_init` 的运行时密钥扩展。
+Apple M2 Pro 没有 SM4E，因此本机运行时返回 `SC_ERR_UNSUPPORTED`/显示 SKIP；
+代码仍被目标 ISA 编译并检查反汇编。Intel VSM4 已完成后端适配和静态指令
+检查，但 Core i9-13900H 的 CPUID 未报告 VSM4 支持，因此运行时返回
+`SC_ERR_UNSUPPORTED`，没有 VSM4 原生性能数据。当前 x86 `sc_init` 使用
+经过测试的标量密钥扩展生成轮密钥，`sc_x86_sm4_key4_hw` 用于验证
+`VSM4KEY4` 的编译与指令生成。
 
 ### 6.5 AES 指令辅助 SM4
 
@@ -420,8 +425,8 @@ PCLMUL/VPCLMUL；其中 GFNI 穷举 256 个硬件 S 盒输入，GHASH 两条路�
 - XTS 覆盖整块和 CTS；
 - SM4-XTS 按 OpenSSL 的 GB tweak 约定比较。
 
-当前 x86 输出为 `PASS: 20160 OpenSSL 3.6 differential checks`；
-VSM4 后端因硬件不支持而明确跳过。
+当前 x86 输出为 `PASS: 20160 OpenSSL 3.6 differential checks`。VSM4 后端
+已经适配，但实验设备不支持该指令集，因而没有对应的原生差分与性能数据。
 
 ### 11.3 内存和未定义行为检查
 
@@ -456,7 +461,7 @@ x86 部分除保留交叉编译和反汇编闸门外，还在 Intel Core i9-1390
 原生执行。状态记录在
 [`results/summary/x86_status.json`](results/summary/x86_status.json)：
 AES-NI、VAES、SSSE3、GFNI、PCLMUL/VPCLMUL 均执行通过；VSM4 因 CPUID
-不支持而明确跳过，并保留实际函数的编译/反汇编证据。
+不支持而保留实际函数的编译/反汇编证据，没有原生执行与性能结果。
 
 ## 13. 性能基准在哪里
 
@@ -532,11 +537,12 @@ make all             # 顺序执行上述全部验收
 可以明确表述为：
 
 1. Apple M2 Pro 已原生运行参考、T-table、NEON TBL、AES 指令辅助 SM4、AESE/AESD 和 PMULL 路径。
-2. ARM SM4E/SM4EKEY 与 Intel VSM4 已写入真实后端并通过编译/反汇编检查；M2 Pro 不支持 SM4E，因此按设计跳过运行。
+2. ARM SM4E/SM4EKEY 与 Intel VSM4 已完成后端适配和编译/反汇编检查；
+   Apple M2 Pro 与 Core i9-13900H 均不支持相应专用指令，因此没有原生性能数据。
 3. x86 AES-NI/VAES、PSHUFB、GFNI、PCLMUL/VPCLMUL 已在 i9-13900H
    原生执行并保存性能样本；VPSHUFB 仍是 ISA 编译探针，实际 shuffle 内核
-   使用 128-bit PSHUFB。VSM4 因本机不支持而只报告静态指令证据。
+   使用 128-bit PSHUFB。
 4. T-table 是课程对比后端，存在秘密相关缓存访问风险；shuffle、bitslice 和硬件指令路径更适合讨论常量时间实现。
-5. 本项目是教学和实验代码，不是经过密码认证或侧信道认证的生产密码库。
+5. 本项目是可复现实验代码，不是经过密码认证或侧信道认证的生产密码库。
 
 这样既完整覆盖任务，也不会把“成功生成目标指令”夸大为“已经在不存在的目标硬件上完成性能实测”。

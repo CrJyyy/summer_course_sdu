@@ -23,12 +23,14 @@
 | 路径 | 主要文件 | 用途 |
 |---|---|---|
 | `scripts/` | `reproduce.py` | 一键获取固定标签、记录 commit 和源码差异、用 Clang Release 构建、运行官方测试/benchmark，并生成环境、统计和库大小结果。`--case sizes` 可只重建库大小 CSV/JSON。 |
+| `scripts/` | `forge_digest_demo.py` | 只使用公开压缩公钥和攻击者选择的 `u,v`，复现“验证器信任外部摘要”时的 ECDSA 存在性伪造，并对固定消息给出失败对照。 |
 | `data/` | `upstream_cases.csv` | 固定两个安全案例和两个性能案例的版本、日期、上游结论及本机验证边界，是报告选题与复现范围的输入清单。 |
 | `results/` | `environment.json` | 保存 CPU、操作系统、架构、编译器、CMake、Python 等实验环境，支持结果复核。 |
 | `results/` | `tag_commits.csv`/`.json`、`case_commits.json`、`build_matrix.json` | 固定 release tag 与 commit 的对应关系、案例提交证据，以及每个版本/预计算表配置的构建和测试状态。 |
 | `results/` | `benchmark_runs.csv` | 保存四组配置每次正式 benchmark 的原始结构化测量值；预热不混入统计样本。 |
 | `results/` | `benchmark_summary.csv`/`.json`、`analysis_summary.json` | 从逐次数据计算 median、IQR、ops/s 和跨配置比较，供 LaTeX 报告引用。 |
-| `results/` | `library_sizes.csv`/`.json` | 由 `reproduce.py` 自动测量并生成的动态库文件大小、Mach-O 段大小和预计算表时间—空间配置。 |
+| `results/` | `library_sizes.csv`/`.json` | 由 `reproduce.py` 自动定位真实动态库 artifact 并生成的文件大小、构建版本和预计算表配置。 |
+| `results/` | `forgery_demo.json` | 摘要伪造复现实验的公开公钥、攻击者输入、构造出的 `(r,s,e)` 以及“选择摘要成功、固定消息失败”的布尔结果。 |
 | `results/raw/` | `configure_*.txt`、`build_*.txt`、`ctest_*.txt`、`bench_*.txt` | 保存每种版本和表大小的配置、编译、官方测试与 10 次 benchmark 原始终端输出；文件名编码版本、配置和运行序号。 |
 | `results/diffs/` | `*_log.txt`、`*_diffstat.txt` | 保存 Clang/GCC constant-time 修复、x86 汇编移除、固定基点乘法重构和默认 86 KiB 表等案例的固定提交日志与差异摘要。 |
 | `report/` | `task2.tex`、`BUILD.md` | 中文 LaTeX 报告源文件，以及 XeLaTeX/`latexmk` 编译和 PDF 逐页检查命令。 |
@@ -46,6 +48,7 @@
 python3 -m venv .venv
 .venv/bin/python -m pip install cmake ninja
 .venv/bin/python scripts/reproduce.py --case all --runs 10 --warmups 2
+.venv/bin/python scripts/forge_digest_demo.py
 ```
 
 脚本会：
@@ -56,6 +59,7 @@ python3 -m venv .venv
 4. 仅对 `v0.4.1` 默认配置与 `v0.5.0` 的 2/22/86 KiB 表执行预热和重复 benchmark，避免把安全版本构建混入性能对照组。
 5. 自动测量动态库大小并输出 `library_sizes.csv`/JSON。
 6. 输出原始日志、逐次 CSV 与 median/IQR/ops/s 汇总。
+7. 运行 `forge_digest_demo.py` 后，另外生成不使用私钥的摘要伪造正反对照结果。
 
 已有构建目录时，可不重跑测试和 benchmark，单独重新生成库大小结果：
 

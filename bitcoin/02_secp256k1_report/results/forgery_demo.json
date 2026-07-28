@@ -1,0 +1,17 @@
+{
+  "public_key_compressed": "021c2a98e839fb46a75c19528a8e7466c41ffa4639ac3db717963c8355d3a7dec8",
+  "attacker_inputs": {
+    "u_hex": "0x12345",
+    "v_hex": "0x6789a"
+  },
+  "forged_signature": {
+    "r_hex": "c112f16c4ceb476cfc9186a95a134f2787cc0302df91716f017ee03d9d29dc25",
+    "s_hex": "0959104f04009a0e9ff14754cf675b312ecb5d779ba33969eaa4c3c00b7b38b5"
+  },
+  "attacker_chosen_digest_hex": "c28b36d8c34825c0601da19e638489f5d0c65a53bb0a23f7ee1aba9248ca32a7",
+  "chosen_digest_verifies": true,
+  "fixed_message_utf8": "course project fixed message",
+  "fixed_message_sha256_hex": "a08f44448d8af4f6d471826c1f757f743760031871006ee60f1ac5727d5b2cd4",
+  "fixed_message_verifies": false,
+  "private_key_used_by_attack": false
+}

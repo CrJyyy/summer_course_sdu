@@ -15,6 +15,8 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{seqsplit}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 \hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!65!black,citecolor=blue!55!black}
 \urlstyle{same}
 \setlength{\parindent}{2em}
@@ -46,7 +48,12 @@
 \end{abstract}
 
 \clearpage
+\begingroup
+\footnotesize
+\setlength{\parskip}{0pt}
+\linespread{0.90}\selectfont
 \tableofcontents
+\endgroup
 \newpage
 
 \section{实验目标与完成状态}
@@ -102,6 +109,29 @@ Python & CPython 3.13.3 \\
 
 私钥仅写入被忽略的 \texttt{.secrets/testnet4\_wallet.json}，报告、截图、CSV 与 JSON 均不含私钥。脚本重复执行 \texttt{wallet-init} 时只读取既有钱包，不覆盖密钥。
 
+\subsection{数据来源、信任边界与可复查产物}
+
+实验把网络接口看作“原始数据运输层”，而不是最终正确性的裁判。Esplora 提供地址 UTXO、广播入口、确认状态以及 raw transaction/block bytes；一旦原始字节下载完成，TXID、WTXID、手续费、区块哈希、Merkle root、PoW 和 witness commitment 均由本地代码重新计算。这样即使 explorer 的展示字段发生格式变化，核心结论仍可从保存的 raw bytes 复现。各层责任如表 \ref{tab:task1-trust-boundary}。
+
+\begin{table}[H]
+\centering
+\caption{Task 1 的数据来源与信任边界}
+\label{tab:task1-trust-boundary}
+\begin{tabular}{p{0.22\textwidth}p{0.31\textwidth}p{0.37\textwidth}}
+\toprule
+层次 & 负责内容 & 本地采取的复核 \\
+\midrule
+Faucet & 向公开 sender 地址发送 Testnet4 UTXO & 只接受链上已确认且金额足够的 UTXO，不接收任何私钥 \\
+Esplora API & UTXO 查询、广播、状态与 raw bytes 下载 & 广播返回 TXID 必须等于本地 TXID；确认交易必须能在 raw block 中找到 \\
+本地密码学层 & BIP143 digest、ECDSA、DER/low-S & 从 witness 重新取签名和公钥，重建摘要后独立验证 \\
+本地解析层 & 交易、区块、Script 与逐字节记录 & 游标必须消费到文件末尾，覆盖记录不得缺失或重叠 \\
+报告层 & 表格、截图和代表性 hexdump & 数字来自 JSON/CSV；截图只作为过程证据，不代替字节级证明 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+持久化文件也按敏感性分离：\texttt{data/wallet\_public.json} 只含地址、公钥和 scriptPubKey；\texttt{data/transaction\_draft.json} 保存可公开的 unsigned/signed transaction 结构和 raw hex；\texttt{data/broadcast.json}、\texttt{data/confirmation.json} 保存链上状态；\texttt{output/data} 保存解析结果与逐字节 CSV。唯一含私钥的秘密文件位于 \texttt{.secrets}，权限检查结果为 0600，并由版本控制忽略。
+
 \section{序列化规范与实现不变量}
 
 Bitcoin 的线格式并不是把一个 JSON 对象直接编码，而是由定长整数、CompactSize、定长哈希和变长字节串依次拼接。解析器必须同时处理“线上的字节顺序”和 explorer 面向人的展示顺序；如果二者混用，即使字段看起来正确，TXID、block hash 与 Merkle root 也会全部错误。表 \ref{tab:serialization-rules} 汇总了本实验实际使用的编码规则。
@@ -136,6 +166,21 @@ SegWit 标志 & version 后出现 \texttt{00 01} & marker/flag 属于完整序�
 这也解释了为什么同一笔交易的 TXID 与 WTXID 不同，以及为什么手续费率按 vB 而非原始 223 bytes 计价。
 
 解析器把游标单调前移作为核心不变量：每次读取都必须先证明剩余长度足够；每个半开区间 $[\textit{offset\_start},\textit{offset\_end})$ 只能被一个字段消费；解析结束时游标必须恰好等于输入长度。逐字节 CSV 是这些不变量的外部证明，而不是解析完成后的附加格式化结果。
+
+\subsection{端序和 CompactSize 的具体工作示例}
+
+以 faucet UTXO 的展示 TXID
+\[
+\texttt{\seqsplit{a7619af457e75fc4c4f51fc1d0d4fe849885274d33ffccb0b47fb75f3a8cace2}}
+\]
+为例，outpoint 在线格式中保存为反序的 32 bytes：
+\begin{lstlisting}[language={}]
+e2ac8c3a5fb77fb4b0ccff334d278598
+84fed4d0c11ff5c4c45fe757f49a61a7
+\end{lstlisting}
+解析时先保留这 32 bytes 的原始顺序，再翻转后输出人类习惯的 TXID。类似地，金额 1,000 sats 编码为 \texttt{e803000000000000}，找零 998,718 sats 编码为 \texttt{3e3d0f0000000000}；它们都是 8-byte little-endian，而不是十六进制字符串的文本反转。
+
+本交易的输入数、输出数和脚本长度都小于 253，因此 CompactSize 各占一个 byte。例如 \texttt{02} 表示两个输出，\texttt{16} 表示十进制 22-byte P2WPKH scriptPubKey。完整区块的 29 笔交易同样用单字节 \texttt{1d} 表示。若数值为 253，则必须写成 \texttt{fd fd00}；直接写 \texttt{fd} 后接更小数值会构成 non-canonical encoding，解析器明确拒绝。该检查避免“同一逻辑值存在多种线格式”给上层哈希与长度判断带来歧义。
 
 \section{交易构造与签名方法}
 
@@ -199,6 +244,175 @@ DER 外的末字节 \texttt{01} 表示 \texttt{SIGHASH\_ALL}。$s$ 已满足 $1\
 \]
 若付款或找零低于保守 dust threshold 294 sats，程序在签名前拒绝构造。广播前再次验证签名、摘要、金额守恒、TXID 和 WTXID。
 
+\subsection{UTXO 选择、手续费估计与 RBF 语义}
+
+\texttt{build} 首先过滤 \texttt{confirmed=true} 的 UTXO，再选择金额最大的一个，以保证本实验的一输入结构并减少手续费估计变量。程序在签名前按预期的 141 vB 计算手续费；签名后再从 stripped/full serialization 计算实际 weight 与 vsize。本次 DER 签名为 71 bytes、附加 sighash byte 后 witness item 为 72 bytes，实际仍为 141 vB，因此 282 sats 恰好对应 2 sat/vB。若 DER 长度或交易结构改变，报告不能只沿用预估值，而必须使用最终序列化重新计算的 vsize 检查实际费率。
+
+\texttt{sequence=0xfffffffd} 同时小于 \texttt{0xfffffffe}，表示 opt-in RBF，又不会启用相对时间锁语义。需要提高费率时，\texttt{--replace-draft} 明确复用原 outpoint，重新计算找零、摘要、签名、TXID 与 WTXID；它不会在地址上随意选择另一个 UTXO。旧交易与替代交易互相冲突，最终只能有一个进入有效区块。这一设计把“加速未确认交易”与“重复花费已确认交易”区分开来。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=198,
+  lastline=228,
+  firstnumber=198,
+  caption={\texttt{transaction.py}：付款、手续费、dust 和一输入两输出结构的构造},
+  label={lst:task1-build-amounts}
+]{../src/btc_lab/transaction.py}
+
+\section{技术实现流程与关键代码}
+
+\subsection{命令行状态流与安全广播}
+
+工具把实验拆成
+\[
+\texttt{wallet-init}\rightarrow\texttt{funding-status}\rightarrow
+\texttt{build}\rightarrow\texttt{broadcast}\rightarrow
+\texttt{fetch-confirmation}\rightarrow\texttt{verify}
+\]
+六个可续跑阶段，并额外提供独立的 \texttt{parse-tx} 与 \texttt{parse-block}。每个命令只读取前一阶段已写入的 JSON 状态，成功后再写入自己的结果文件，因此 faucet 等待、交易确认等待或程序退出都不要求从头生成钱包。重复执行 \texttt{wallet-init} 会加载既有钱包；\texttt{build --replace-draft} 才会显式复用原输入创建 RBF 替代草稿。
+
+广播并不是把 \texttt{raw\_hex} 直接交给 API。清单 \ref{lst:task1-broadcast} 展示了实际的 fail-closed 流程：先重建签名摘要、验证 ECDSA、TXID/WTXID 与金额守恒；任何检查失败都拒绝广播。API 返回的 TXID 还必须与本地 TXID 相同，否则不保存“广播成功”状态。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=128,
+  lastline=138,
+  firstnumber=128,
+  caption={\texttt{cli.py}：广播前的本地验证与返回 TXID 检查},
+  label={lst:task1-broadcast}
+]{../src/btc_lab/cli.py}
+
+确认阶段以同一 TXID 查询 status；只有 \texttt{confirmed=true} 才下载确认交易与完整区块的 raw bytes，并调用与手工解析命令完全相同的解析函数。清单 \ref{lst:task1-confirmation} 中的四个布尔量把“API 称已确认”进一步收紧为：交易字节的 TXID 匹配、交易确实存在于区块交易数组、Merkle root 正确且 header 满足 PoW。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=141,
+  lastline=164,
+  firstnumber=141,
+  caption={\texttt{cli.py}：确认后下载原始字节并触发交易/区块验证},
+  label={lst:task1-confirmation}
+]{../src/btc_lab/cli.py}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[
+  node distance=8mm and 10mm,
+  stage/.style={
+    draw=black!70, rounded corners=2pt, fill=blue!5,
+    minimum height=9mm, text width=2.6cm, align=center, font=\small
+  },
+  gate/.style={
+    stage, fill=orange!10, draw=orange!65!black
+  },
+  artifact/.style={
+    stage, fill=green!8, draw=green!45!black
+  },
+  flow/.style={-{Latex[length=2.2mm]}, thick, draw=black!75}
+]
+  \node[stage] (wallet) {\texttt{wallet-init}\\生成或加载地址};
+  \node[stage, right=of wallet] (funding) {\texttt{funding-status}\\查询可用 UTXO};
+  \node[stage, right=of funding] (build) {\texttt{build}\\序列化并签名};
+  \node[gate, right=of build] (local) {本地安全门\\签名、金额、ID};
+
+  \node[stage, below=of local] (broadcast) {\texttt{broadcast}\\提交 raw transaction};
+  \node[stage, left=of broadcast] (confirmed) {轮询确认状态\\必要时 RBF};
+  \node[stage, left=of confirmed] (fetch) {\texttt{fetch-}\\\texttt{confirmation}\\下载 raw bytes};
+  \node[stage, left=of fetch] (parse) {\texttt{parse-tx/block}\\逐字段消费字节};
+
+  \node[gate, below=of parse] (proofs) {\texttt{verify}\\BIP143、Merkle、PoW};
+  \node[artifact, right=of proofs, text width=3.5cm] (outputs) {JSON/CSV/raw hex\\报告表格与注释 hexdump};
+
+  \draw[flow] (wallet) -- (funding);
+  \draw[flow] (funding) -- (build);
+  \draw[flow] (build) -- (local);
+  \draw[flow] (local) -- (broadcast);
+  \draw[flow] (broadcast) -- (confirmed);
+  \draw[flow] (confirmed) -- (fetch);
+  \draw[flow] (fetch) -- (parse);
+  \draw[flow] (parse) -- (proofs);
+  \draw[flow] (proofs) -- (outputs);
+\end{tikzpicture}%
+}
+\caption{Task 1 的可续跑状态流：链上等待阶段与本地解析、验证阶段通过持久化 JSON 解耦}
+\label{fig:task1-implementation-flow}
+\end{figure}
+
+\subsection{BIP143 预映像与 witness 组装}
+
+清单 \ref{lst:task1-bip143} 是报告前述公式的直接实现。所有整数都显式指定 little-endian；outpoint 的 TXID 在进入线格式前翻转；scriptCode 使用 CompactSize 长度前缀；输入金额以 8 bytes 写入。函数最终只返回 32-byte double-SHA256，而不是把人类可读 TXID 字符串误作哈希输入。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=168,
+  lastline=196,
+  firstnumber=168,
+  caption={\texttt{transaction.py}：BIP143 \texttt{SIGHASH\_ALL} 摘要实现},
+  label={lst:task1-bip143}
+]{../src/btc_lab/transaction.py}
+
+得到 digest 后，\texttt{coincurve} 只负责 secp256k1 ECDSA 原语；交易结构、scriptCode、sighash type 和 witness serialization 均由本项目负责。清单 \ref{lst:task1-signing} 中 \texttt{hasher=None} 表示库直接签署已经计算好的 BIP143 digest，避免再次 SHA256；DER 末尾附加的 \texttt{01} 不属于 DER，而是 Bitcoin witness 中的 sighash type。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=239,
+  lastline=249,
+  firstnumber=239,
+  caption={\texttt{transaction.py}：签名、witness 组装与 weight/vsize 计算},
+  label={lst:task1-signing}
+]{../src/btc_lab/transaction.py}
+
+\subsection{逐字节游标与完整覆盖}
+
+解析器没有在解析结束后再按字段长度“猜测”offset，而是让所有字段都通过同一个 \texttt{ByteReader.read} 消费。清单 \ref{lst:task1-bytereader} 中每消费一个 byte 就立即生成一个 \texttt{ByteRecord}，记录半开区间、十六进制、8-bit 二进制、字段路径、解码值、端序和备注；越界在记录产生前抛出 \texttt{ParseError}。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=42,
+  lastline=70,
+  firstnumber=42,
+  caption={\texttt{models.py}：消费字节时同步建立逐字节归属记录},
+  label={lst:task1-bytereader}
+]{../src/btc_lab/models.py}
+
+交易或区块解析结束后，覆盖断言函数再将实际 offset 序列与 \texttt{range(start,end)} 精确比较；缺失、重复和 trailing bytes 都会使命令失败。因此“every bit”结果来自解析路径本身，而不是仅比较 CSV 行数。该函数的完整实现位于 \path{models.py} 的 \path{assert_complete_coverage}。
+
+\subsection{完整区块的验证闭环}
+
+区块解析复用同一交易解析器：读取 80-byte header 后，根据 CompactSize 数量逐笔调用 \texttt{\_parse\_transaction}，最后才允许游标到达文件末尾。清单 \ref{lst:task1-block-core} 展示了 block hash、compact target、PoW 整数比较、交易循环、覆盖断言与 Merkle root 重建的核心顺序。
+
+\lstinputlisting[
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  firstline=65,
+  lastline=79,
+  firstnumber=65,
+  caption={\texttt{block.py}：从 header 到 PoW、交易数组和 Merkle root},
+  label={lst:task1-block-core}
+]{../src/btc_lab/block.py}
+
+随后程序从 coinbase input 的首个 data-push 解码 BIP34 height，并在 coinbase outputs 中匹配 \texttt{6a24aa21a9ed} witness commitment 前缀。最终 JSON 同时保存 header 声明值、本地计算值和布尔比较值，使报告中的 block hash、Merkle、PoW 和逐字节覆盖可以分别追溯。
+
 \section{真实实验交易结果}
 
 CypherFaucet 向 sender 注入 1,000,000 sats；入账交易 TXID 为
@@ -235,6 +449,39 @@ Byte coverage & 223 records，complete=true \\
 其中 marker/flag 为 \texttt{00 01}；输入的 \texttt{scriptSig} 长度为零，witness 单独序列化，因此 TXID 排除 witness，而 WTXID 包含 witness。CSV 中 223 条记录与 223 个原始字节一一对应。
 
 从字节布局看，offset 0--3 是 version，4--5 是 marker/flag，offset 6 的 \texttt{01} 是输入数；唯一输入随后给出反序保存的前序 TXID、vout 0、长度为零的 scriptSig 与 \texttt{fdffffff} sequence。两个输出分别携带 1,000 和 998,718 sats，且 scriptPubKey 都是 22-byte 的 \texttt{00 14 <20-byte key hash>}。输出之后才出现 witness stack：计数 \texttt{02}、72-byte 签名项与 33-byte 压缩公钥项，最后四字节为 locktime。该顺序既能从 raw hex 单独恢复，也与生成的逐字节 JSON/CSV 一致。
+
+\subsection{实验交易的精确字节区间}
+
+表 \ref{tab:task1-byte-layout} 由 \texttt{generated\_transaction\_bytes.csv} 按连续 \texttt{field\_path} 聚合而来。offset 使用左闭右开区间，因此长度恒等于 $\textit{end}-\textit{start}$；所有区间首尾相接，从 0 连续覆盖到 223。这个表比只展示 raw hex 更容易定位 marker/flag、空 scriptSig 和 witness 的实际位置。
+
+\begin{longtable}{p{0.13\textwidth}p{0.31\textwidth}p{0.46\textwidth}}
+\caption{223-byte 实验交易的字段级 offset 映射}\label{tab:task1-byte-layout}\\
+\toprule
+Offset & 字段 & 原始字节与解码 \\
+\midrule
+\endfirsthead
+\toprule
+Offset & 字段 & 原始字节与解码 \\
+\midrule
+\endhead
+0--4 & version & \texttt{02000000} $\rightarrow 2$ \\
+4--6 & marker / flag & \texttt{00 01}，启用 SegWit serialization \\
+6--7 & input count & \texttt{01} $\rightarrow 1$ \\
+7--39 & previous TXID & \texttt{e2ac8c3a\ldots f49a61a7}，展示时整体翻转 \\
+39--43 & previous vout & \texttt{00000000} $\rightarrow 0$ \\
+43--44 & scriptSig length & \texttt{00}；因此没有 scriptSig 数据区间 \\
+44--48 & sequence & \texttt{fdffffff} $\rightarrow 0xfffffffd$ \\
+48--49 & output count & \texttt{02} $\rightarrow 2$ \\
+49--80 & payment output & 8-byte 金额、\texttt{16} 长度、22-byte receiver P2WPKH \\
+80--111 & change output & 8-byte 金额、\texttt{16} 长度、22-byte sender P2WPKH \\
+111--112 & witness item count & \texttt{02} $\rightarrow 2$ \\
+112--185 & signature item & \texttt{48} 长度 + 72 bytes DER/\texttt{SIGHASH\_ALL} \\
+185--219 & public-key item & \texttt{21} 长度 + 33-byte compressed public key \\
+219--223 & locktime & \texttt{00000000} $\rightarrow 0$ \\
+\bottomrule
+\end{longtable}
+
+需要注意，offset 43 的 \texttt{00} 既是一个真实占位字段，又说明接下来没有 unlocking Script bytes；不能把 witness 误接到该字段后立刻解析。解析器必须先完成全部 outputs，随后按每个 input 的顺序读取 witness stack。TXID 的 stripped serialization 则完全移除 offset 4--5 和 111--218，而不是仅把 witness 内容替换为空。
 
 \section{逐字节解析器}
 
@@ -405,12 +652,12 @@ mempool.space faucet 在登录后提示账户无权限；testnet4.dev faucet 的
 \centering
 \begin{subfigure}[t]{0.48\textwidth}
   \centering
-  \includegraphics[width=\linewidth,height=0.20\textheight,keepaspectratio]{assets/testnet4_funding_tx_unconfirmed.png}
+  \includegraphics[width=\linewidth,height=0.18\textheight,keepaspectratio]{assets/testnet4_funding_tx_unconfirmed.png}
   \caption{Faucet 入账交易进入公开 mempool}
 \end{subfigure}\hfill
 \begin{subfigure}[t]{0.48\textwidth}
   \centering
-  \includegraphics[width=\linewidth,height=0.20\textheight,keepaspectratio]{assets/testnet4_receiver_pending.png}
+  \includegraphics[width=\linewidth,height=0.18\textheight,keepaspectratio]{assets/testnet4_receiver_pending.png}
   \caption{Receiver 出现待确认的 1,000 sats}
 \end{subfigure}
 
@@ -418,19 +665,18 @@ mempool.space faucet 在登录后提示账户无权限；testnet4.dev faucet 的
 
 \begin{subfigure}[t]{0.48\textwidth}
   \centering
-  \includegraphics[width=\linewidth,height=0.20\textheight,keepaspectratio]{assets/testnet4_experiment_tx_confirmed.png}
+  \includegraphics[width=\linewidth,height=0.18\textheight,keepaspectratio]{assets/testnet4_experiment_tx_confirmed.png}
   \caption{实验交易进入高度 144927 并确认}
 \end{subfigure}\hfill
 \begin{subfigure}[t]{0.48\textwidth}
   \centering
-  \includegraphics[width=\linewidth,height=0.20\textheight,keepaspectratio]{assets/testnet4_receiver_confirmed.png}
+  \includegraphics[width=\linewidth,height=0.18\textheight,keepaspectratio]{assets/testnet4_receiver_confirmed.png}
   \caption{Receiver 最终余额与已确认 UTXO}
 \end{subfigure}
 \caption{从 Faucet 入账、实验交易广播到最终确认的完整公开链上过程}
 \label{fig:tx-process}
 \end{figure}
 
-\clearpage
 完整复现命令为：
 \begin{lstlisting}[language=bash]
 .venv/bin/btc-lab funding-status
@@ -470,6 +716,12 @@ Script 反汇编 & 直接 push、PUSHDATA1/2/4、未知 opcode、截断 push & �
 
 真实验收还进行了跨来源对照：本地计算的 TXID、WTXID、block hash、height、金额、手续费、weight/vsize 与 Testnet4 公共数据一致；交易确实出现在高度 144927 的原始区块第 8 笔；\texttt{btc-lab verify} 可执行的检查均为 true。因而验收不依赖单个截图或单个 API 字段。
 
+\subsection{失败模式与 fail-closed 行为}
+
+实验代码把异常输入作为验收对象，而不只测试“正常样本能否解析”。截断的 CompactSize、声明长度大于剩余字节、未知但可保留的 opcode、截断 data-push、交易尾部多余字节、witness 数量与输入数量不一致都会在对应层产生明确错误。广播路径还额外拒绝以下状态：witness 的最后一个 sighash byte 不是 \texttt{01}、witness 公钥的 HASH160 与被花费 P2WPKH 不一致、签名验证失败、本地重算 ID 不一致或输入金额不等于输出加手续费。
+
+“fail-closed”意味着失败不会自动降级为跳过检查。例如 API 返回一个格式正确但不同的 TXID 时，程序不会因为 HTTP 请求成功就写入广播成功状态；确认状态为真但交易不在下载的区块数组中时，也不会生成最终验收结论。这种错误处理对课程实验很重要，因为它明确区分“网络调用成功”“字段能够解析”和“密码学/区块证明成立”三个层级。
+
 \subsection{范围与限制}
 
 本工具的目标是课程实验所需的序列化、常见脚本识别和本次 P2WPKH 验证，不是 Bitcoin Core 的替代实现。它没有覆盖所有历史 sighash 特例、软分叉激活状态、Script 数值规则、资源限制和 Taproot script-path 共识语义；完整区块中其他输入只做结构解析，不据此声称重新执行了整个 UTXO 状态转换。Esplora API 仍承担 UTXO 发现、广播与原始数据传输，但所有密码学与字节级结论都由下载后的 raw bytes 本地复算。Testnet4 资产没有经济价值，实验密钥也不得迁移到主网使用。
@@ -478,6 +730,7 @@ Script 反汇编 & 直接 push、PUSHDATA1/2/4、未知 opcode、截断 push & �
 
 交易/区块序列化不是“读取 explorer JSON”，而是以原始字节为唯一输入，显式处理 CompactSize、端序、witness 与哈希展示约定，并用可独立复算的 BIP143 摘要、ECDSA、TXID/WTXID、Merkle root、witness commitment 和 PoW 建立闭环。本实验已从 faucet UTXO、交易构造、广播、确认到完整确认区块逐字节解析全部贯通；223-byte 交易与 88,989-byte 区块均达到每字节一个 8-bit 归属记录。完整 JSON、CSV 和 raw hex 保存在 \texttt{output/data} 与 \texttt{data/raw}，私钥始终只存在于权限 0600 且被忽略的秘密文件中。
 
+\clearpage
 \begin{thebibliography}{9}
 \bibitem{txref} Bitcoin Developer Reference, \emph{Transactions}. \url{https://developer.bitcoin.org/reference/transactions.html}
 \bibitem{blockref} Bitcoin Developer Reference, \emph{Block Chain}. \url{https://developer.bitcoin.org/reference/block_chain.html}

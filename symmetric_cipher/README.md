@@ -8,9 +8,9 @@ T-table、shuffle/fixslice、AES/PMULL/GFNI/SM4 等新指令，并把 AES、SM4�
 GIFT-64、TWINE 接到 CTR/GCM/XTS 工作模式。原始 86 页 PPT 已原样保存在
 `materials/`，逐页落点见 [`materials/SLIDE_MAP.md`](materials/SLIDE_MAP.md)。
 
-> **教学用途，不是生产密码库。** 本项目没有经过商用密码检测、FIPS/GM/T
-> 认证或独立侧信道审计。T-table 路径存在秘密相关内存访问，只用于解释性能
-> 与缓存侧信道之间的权衡；不要把它用于真实密钥。
+> **实现边界：这是可复现实验实现，不是经过认证的生产密码库。** 本项目没有
+> 经过商用密码检测、FIPS/GM/T 认证或独立侧信道审计。T-table 路径存在秘密
+> 相关内存访问，选择该后端时必须同时评估吞吐率与缓存侧信道风险。
 
 ## 已实现范围
 
@@ -20,7 +20,7 @@ GIFT-64、TWINE 接到 CTR/GCM/XTS 工作模式。原始 86 页 PPT 已原样保
 | 参考实现 | 显式大端读写、加解密、原地操作、单块/多块统一接口 |
 | T-table | AES 4 KiB；SM4 4 KiB、1 KiB+旋转、2 KiB 重叠读取 |
 | Shuffle/fixslice | ARM NEON `TBL` 的 TWINE 4-bit S 盒/置换、SM4 固定 16 行 S 盒；GIFT 四路 bitslice |
-| 新指令 | ARM `AESE/AESD`、`PMULL`、`TBL` 运行路径；x86 AES-NI/VAES/PSHUFB/GFNI/PCLMUL/VPCLMUL 已在 i9-13900H 原生执行，VSM4 保留真实后端与反汇编见证 |
+| 新指令 | ARM `AESE/AESD`、`PMULL`、`TBL` 运行路径；x86 AES-NI/VAES/PSHUFB/GFNI/PCLMUL/VPCLMUL 已在 i9-13900H 原生执行；VSM4 已完成适配和静态指令检查，但实验设备不支持 |
 | GFNI | 论文矩阵的标量模型，穷举验证全部 256 个 SM4 S 盒输入 |
 | AES 辅助 SM4 | 常量访问预映射后用 AESE/AESENC 完成 S 盒，四块并行 |
 | CTR | AES、SM4、GIFT-64、TWINE；大端计数器、尾部和回绕检测 |
@@ -30,7 +30,9 @@ GIFT-64、TWINE 接到 CTR/GCM/XTS 工作模式。原始 86 页 PPT 已原样保
 
 GCM/XTS 只接受 128-bit 分组的 AES/SM4；GIFT-64 与 TWINE 只接 CTR。
 Apple M2 Pro 与本次 x86 主机都不提供 SM4 专用指令，`sm4-hw` 会返回“不支持”，
-而不是悄悄伪装成硬件结果。其余 x86 后端已完成原生正确性和性能验证。
+而不是悄悄伪装成硬件结果。ARM SM4E 和 Intel VSM4 均已完成后端适配与
+静态指令检查，但现有设备无法提供相应的原生性能数据；其余 x86 后端已完成
+原生正确性和性能验证。
 
 ## 一键复现
 
@@ -77,7 +79,7 @@ make build/sc_demo
 - `results/raw/x86_samples.csv` 与 `results/summary/x86_summary.json`：3240 个
   x86 原始样本、216 条汇总，以及每条样本的 RDTSCP TSC ticks/byte。
 - `results/summary/x86_status.json`：CPU 特征、测试计数、ISA 原生执行状态和
-  VSM4 不支持原因。
+  VSM4 后端的适配与静态指令证据。
 - `results/summary/object_sizes.csv` 与 `table_sizes.csv`：对象和表尺寸。
 - `output/pdf/symmetric_cipher_software_optimization.pdf`：中文完整报告。
 
@@ -102,7 +104,8 @@ output/pdf/         最终 PDF
 - ARM64 数据来自 Apple M2 Pro；x86 数据来自 Windows x86-64 上的
   Intel Core i9-13900H。两组数据分开保存，不脱离平台直接比较。
 - i9-13900H 原生执行 AES-NI、VAES、SSSE3、GFNI、PCLMUL 和 VPCLMUL。
-  它不支持 VSM4，因此运行时明确跳过，只保留 VSM4 编译/反汇编证据。
+  VSM4 后端已完成适配和编译/反汇编检查，但该处理器未报告 VSM4 支持，
+  因此没有 VSM4 原生执行与性能结果。
 - x86 的 `cycles_per_byte` 字段实际表示序列化 RDTSCP 得到的 invariant-TSC
   ticks/byte，不等同于随睿频变化的物理核心时钟周期。
 - NEON/SSSE3 SM4 shuffle 固定扫描 16 行 S 盒，并以四块并行摊薄装配开销；
