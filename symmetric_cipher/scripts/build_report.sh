@@ -8,6 +8,10 @@ mkdir -p "$root/tmp/pdfs" "$root/tmp/matplotlib" "$root/tmp/fontconfig" \
 MPLCONFIGDIR="$root/tmp/matplotlib" \
 XDG_CACHE_HOME="$root/tmp/fontconfig" \
 python3 "$root/scripts/plot_results.py"
+if [ -f "$root/results/summary/x86_summary.json" ]; then
+  python3 "$root/scripts/plot_results.py" \
+    --input "$root/results/summary/x86_summary.json" --prefix x86_
+fi
 python3 "$root/scripts/generate_report_data.py"
 
 cd "$root"

@@ -252,12 +252,16 @@ static void test_multiblock_backends(void) {
         {SC_SM4_128, SC_BACKEND_TTABLE_2K},
         {SC_SM4_128, SC_BACKEND_SHUFFLE},
         {SC_SM4_128, SC_BACKEND_AES_HW},
+        {SC_SM4_128, SC_BACKEND_GFNI},
+        {SC_SM4_128, SC_BACKEND_SM4_HW},
         {SC_GIFT64_128, SC_BACKEND_REF},
         {SC_GIFT64_128, SC_BACKEND_SHUFFLE},
         {SC_TWINE_80, SC_BACKEND_SHUFFLE},
         {SC_TWINE_128, SC_BACKEND_SHUFFLE}
     };
-    uint8_t key[32], storage[2][160 + 2], expected[160], recovered[160];
+    static const size_t block_counts[] = {0,1,3,4,7,8,9,15,16,17};
+    uint8_t key[32], storage[2][17 * 16 + 2];
+    uint8_t expected[17 * 16], recovered[17 * 16];
     for (size_t c = 0; c < sizeof(cases) / sizeof(cases[0]); ++c) {
         size_t klen = key_len_for(cases[c].alg);
         for (size_t i = 0; i < klen; ++i) key[i] = (uint8_t)(17U * i + c);
@@ -266,19 +270,23 @@ static void test_multiblock_backends(void) {
         sc_status init = sc_init(&opt, cases[c].alg, cases[c].backend, key, klen);
         if (init == SC_ERR_UNSUPPORTED) continue;
         CHECK(init == SC_OK);
-        size_t bs = sc_block_size(&ref), blocks = 9, bytes = bs * blocks;
-        uint8_t *input = storage[0] + 1;
-        uint8_t *actual = storage[1] + 1;
-        for (size_t i = 0; i < bytes; ++i) input[i] = (uint8_t)(i * 29U + c);
-        CHECK(sc_encrypt_blocks(&ref, input, expected, blocks) == SC_OK);
-        CHECK(sc_encrypt_blocks(&opt, input, actual, blocks) == SC_OK);
-        CHECK(memcmp(expected, actual, bytes) == 0);
-        CHECK(sc_decrypt_blocks(&opt, actual, recovered, blocks) == SC_OK);
-        CHECK(memcmp(input, recovered, bytes) == 0);
-        memcpy(actual, input, bytes);
-        CHECK(sc_encrypt_blocks(&opt, actual, actual, blocks) == SC_OK);
-        CHECK(sc_decrypt_blocks(&opt, actual, actual, blocks) == SC_OK);
-        CHECK(memcmp(input, actual, bytes) == 0);
+        size_t bs = sc_block_size(&ref);
+        for (size_t n = 0; n < sizeof(block_counts) / sizeof(block_counts[0]); ++n) {
+            size_t blocks = block_counts[n], bytes = bs * blocks;
+            uint8_t *input = storage[0] + 1;
+            uint8_t *actual = storage[1] + 1;
+            for (size_t i = 0; i < bytes; ++i)
+                input[i] = (uint8_t)(i * 29U + c + blocks);
+            CHECK(sc_encrypt_blocks(&ref, input, expected, blocks) == SC_OK);
+            CHECK(sc_encrypt_blocks(&opt, input, actual, blocks) == SC_OK);
+            CHECK(memcmp(expected, actual, bytes) == 0);
+            CHECK(sc_decrypt_blocks(&opt, actual, recovered, blocks) == SC_OK);
+            CHECK(memcmp(input, recovered, bytes) == 0);
+            memcpy(actual, input, bytes);
+            CHECK(sc_encrypt_blocks(&opt, actual, actual, blocks) == SC_OK);
+            CHECK(sc_decrypt_blocks(&opt, actual, actual, blocks) == SC_OK);
+            CHECK(memcmp(input, actual, bytes) == 0);
+        }
     }
 }
 
@@ -328,7 +336,11 @@ int main(void) {
     }
     printf("PASS: %u checks\n", tests_run);
     sc_cpu_features f = sc_detect_cpu_features();
-    printf("features: arm-aes=%d arm-pmull=%d arm-sm4=%d x86-aesni=%d avx2=%d gfni=%d\n",
-           f.arm_aes, f.arm_pmull, f.arm_sm4, f.x86_aesni, f.x86_avx2, f.x86_gfni);
+    printf("features: arm-aes=%d arm-pmull=%d arm-sm4=%d "
+           "x86-aesni=%d x86-ssse3=%d x86-avx2=%d x86-vaes=%d "
+           "x86-pclmul=%d x86-vpclmul=%d x86-gfni=%d x86-sm4=%d\n",
+           f.arm_aes, f.arm_pmull, f.arm_sm4, f.x86_aesni, f.x86_ssse3,
+           f.x86_avx2, f.x86_vaes, f.x86_pclmul, f.x86_vpclmul,
+           f.x86_gfni, f.x86_sm4);
     return 0;
 }

@@ -65,9 +65,10 @@ GIFT-64（128-bit key）和 TWINE-80/128，并系统比较 T-table、
 shuffle/bitslice/fixslice 与新指令集。工作模式覆盖全部算法的 CTR，以及
 AES/SM4 的 GCM、XTS；GCM 使用 ARM PMULL 加速 GHASH，XTS 同时支持
 IEEE~1619 与 GB/T~17964-2021 的 tweak 乘法约定及 ciphertext stealing。
-Apple M2 Pro 上保存 3 次预热、15 次正式测量的全部样本；x86-64 路径只做
-完整交叉编译与反汇编确认，性能明确标记为待目标机实测。功能测试包括
-1592 项 KAT/随机/边界检查和 3360 项 OpenSSL~3.6.2 差分检查。
+Apple M2 Pro 与 Intel Core i9-13900H 上分别保存 3 次预热、15 次正式测量
+的全部样本。x86-64 原生验证执行 AES-NI、VAES、SSSE3、GFNI、PCLMUL 和
+VPCLMUL，包含 \XGenericChecks 项通用检查、\XBackendChecks 项专用后端检查
+与 \XOpenSSLChecks 项 OpenSSL 差分；VSM4 因目标 CPU 不支持而明确跳过。
 \end{abstract}
 
 \noindent\textbf{关键词：} 对称密码；AES；SM4；GIFT；TWINE；T-table；
@@ -254,7 +255,8 @@ XTS 使用两个独立密钥上下文，拒绝短于 16 字节的数据单元，
 KAT & AES 三种密钥、SM4、GIFT-64、TWINE-80/128、NIST GCM、RFC 8998\\
 内部交叉 & 参考/表/shuffle/硬件后端，固定种子随机输入，原地与非对齐语义\\
 模式边界 & CTR 尾部/回绕、GCM AAD/错误标签清零、XTS CTS/最小数据单元\\
-OpenSSL & 3360 项 AES/SM4 ECB、CTR、GCM、XTS 随机差分；AES/SM4 CTS\\
+OpenSSL & x86 上 \XOpenSSLChecks 项 AES/SM4 ECB、CTR、GCM、XTS
+随机差分；覆盖全部可用后端\\
 工具链 & \texttt{-Wall -Wextra -Wpedantic -Werror}、ASan、UBSan\\
 ISA & ARM AESE/TBL/PMULL/SM4E；\newline
 x86 AES/VAES/PSHUFB/GFNI/CLMUL/VSM4\\
@@ -264,15 +266,18 @@ x86 AES/VAES/PSHUFB/GFNI/CLMUL/VSM4\\
 
 \section{实验方法}
 
-实验平台为 \BenchCPU（\BenchPlatform），编译器为 \BenchCompiler。
+ARM 实验平台为 \BenchCPU（\BenchPlatform），编译器为 \BenchCompiler；
+x86 实验平台为 \XBenchCPU（\XBenchPlatform），编译器为
+\XBenchCompiler，OpenSSL 为 \XOpenSSLVersion。
 消息长度取 64~B、512~B、4~KiB、8~KiB、64~KiB、1~MiB。每组预热
 3 次、正式运行 15 次；每个样本至少处理 256~KiB，记录完整纳秒值，
 汇总 median、Q1、Q3、IQR、ns/byte 和十进制 GB/s。密钥扩展在计时区间外，
 模式的计数器、tweak、GHASH 和标签均在计时区间内。volatile checksum
 防止编译器删除计算。
 
-x86-64 结果文件中的 cycles/byte 为 \texttt{null}；当前仅完成源码交叉编译、
-静态库生成和目标指令确认，不把 ARM 主机数据改名为 x86 数据。
+x86-64 结果同时记录单调时钟和序列化 RDTSCP。文中的 TSC ticks/byte
+表示 invariant-TSC 计数，不等同于随睿频变化的物理核心周期。ARM 与 x86
+结果分别保存，不把一个平台的数据改名为另一个平台。
 
 \section{结果与分析}
 
@@ -327,6 +332,48 @@ AES-CTR 能直接发挥硬件块加密能力；XTS 还要执行第二个密钥�
 \end{longtable}
 \normalsize
 
+\subsection{x86-64 原生执行结果}
+
+x86 状态文件记录为 \texttt{passed}。CPUID/XGETBV 检测到的 AES-NI、
+SSSE3、AVX2、VAES、GFNI、PCLMUL 与 VPCLMUL 均由专用测试直接调用，
+并与参考实现逐项比较。GFNI 硬件路径还穷举全部 256 个 SM4 S 盒输入；
+PCLMUL 和 VPCLMUL 则分别对照独立标量 GHASH oracle。VSM4 未被 CPUID
+报告，因此显式请求 \texttt{sm4-hw} 返回 \texttt{SC\_ERR\_UNSUPPORTED}。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{results/figures/x86_block_backends_1m.pdf}
+\caption{x86-64 上 1~MiB 分组加密吞吐率；数据来自独立 x86 汇总。}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{results/figures/x86_size_scaling.pdf}
+\caption{x86-64 上 AES/SM4 后端随消息长度的吞吐变化。}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{results/figures/x86_mode_throughput.pdf}
+\caption{x86-64 上 CTR、GCM 与 XTS 的 512~B/4~KiB 吞吐率。}
+\end{figure}
+
+\small
+\begin{longtable}{lllrrr}
+\caption{x86-64 上 1~MiB 全部实测结果（直接由 JSON 生成）}\\
+\toprule
+算法 & 后端 & 操作 & GB/s & ns/byte & TSC ticks/byte\\
+\midrule
+\endfirsthead
+\toprule
+算法 & 后端 & 操作 & GB/s & ns/byte & TSC ticks/byte\\
+\midrule
+\endhead
+\XOneMiBResultRows
+\bottomrule
+\end{longtable}
+\normalsize
+
 \section{安全、性能与平台权衡}
 
 \begin{enumerate}
@@ -337,8 +384,8 @@ AES-CTR 能直接发挥硬件块加密能力；XTS 还要执行第二个密钥�
   替代协议级 nonce 管理、密钥生命周期和故障防护。
   \item \textbf{运行时分派：}可移植二进制必须检查 CPUID/XGETBV 或 ARM
   feature；“编译器接受 intrinsic”不等于当前 CPU 可以执行。
-  \item \textbf{x86 平台：}VSM4 等 2026 扩展已验证编码，但没有目标硬件，
-  所以报告不提供伪造吞吐和 cycles/byte。
+  \item \textbf{x86 平台：}AES-NI/VAES、SSSE3、GFNI 与 CLMUL 已完成
+  原生执行和性能采样；VSM4 仅验证编码与分派拒绝，不提供伪造吞吐。
 \end{enumerate}
 
 \section{复现方式}
@@ -347,6 +394,7 @@ AES-CTR 能直接发挥硬件块加密能力；XTS 还要执行第二个密钥�
 make test
 make test-sanitize
 make check-x86
+make validate-x86
 make bench
 make report
 \end{lstlisting}
@@ -355,6 +403,9 @@ make report
 \begin{itemize}
   \item 原始样本：\path{results/raw/native_samples.csv}；
   \item 汇总统计：\path{results/summary/native_summary.json}；
+  \item x86 原始样本：\path{results/raw/x86_samples.csv}；
+  \item x86 汇总：\path{results/summary/x86_summary.json}；
+  \item x86 状态：\path{results/summary/x86_status.json}；
   \item 图表脚本：\path{scripts/plot_results.py}；
   \item 数值宏脚本：\path{scripts/generate_report_data.py}。
 \end{itemize}
@@ -365,9 +416,9 @@ make report
 本项目建立了从正确性基线到多类优化和三种工作模式的完整链条。实测说明：
 表优化的收益受缓存与额外指令共同约束；硬件 AES 的数量级优势最稳定；
 shuffle/fixslice 必须和多块数据布局一起设计；GCM/XTS 不能只优化分组密码
-而忽略 GHASH、计数器和 tweak。ARM64 已完成原生验证，x86 已完成可审计的
-编译/指令证据，下一步只需在真实 x86 主机复用同一基准生成 cycles/byte，
-无需修改报告的数据来源原则。
+而忽略 GHASH、计数器和 tweak。ARM64 与 x86-64 均已完成原生验证；
+x86 结果额外证明 GFNI、VAES、PCLMUL/VPCLMUL 的实际执行，并以独立文件
+保存 RDTSCP TSC ticks/byte。VSM4 仍严格限定为目标硬件不支持的静态证据。
 
 \begin{thebibliography}{9}\sloppy
 \bibitem{fips197} NIST, \emph{FIPS 197: Advanced Encryption Standard}, 2023.

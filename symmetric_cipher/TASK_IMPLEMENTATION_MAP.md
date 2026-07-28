@@ -399,23 +399,29 @@ GIFT-64 与 TWINE 没有套用 GCM/XTS，因为两者为 64-bit 分组，而标�
 | `test_xts_roundtrip` | AES/SM4 XTS、IEEE/GB、CTS、最小长度 |
 | `test_random_cross` | 固定种子 SM4 参考与 T-table 随机交叉比较 |
 | `test_gfni_model` | GFNI 标量模型穷举全部 256 个 S 盒输入 |
-| `test_multiblock_backends` | AES 全密钥长度、SM4 各后端、GIFT/TWINE 的 9 块、非对齐、原地、加密和解密 |
+| `test_multiblock_backends` | AES 全密钥长度、SM4 各后端、GIFT/TWINE 的 0/1/3/4/7/8/9/15/16/17 块、非对齐、原地、加密和解密 |
 | `test_mode_boundaries` | CTR 失败原子性、17/31/63 字节 XTS 原地 CTS、非法约定 |
 
-当前完整测试输出为 `PASS: 1592 checks`。
+当前 x86 完整测试输出为 `PASS: 2755 checks`。
+
+专用 x86 文件 [`tests/test_x86_backends.c`](tests/test_x86_backends.c)
+直接调用 AES-NI/VAES、SSSE3、AES-assisted SM4、GFNI、
+PCLMUL/VPCLMUL；其中 GFNI 穷举 256 个硬件 S 盒输入，GHASH 两条路径
+分别对照独立标量 oracle。当前输出为 `PASS: 830 x86 checks`。
 
 ### 11.2 OpenSSL 差分
 
 文件：[`tests/test_openssl_diff.c`](tests/test_openssl_diff.c)
 
 - 固定 PRNG 状态生成可重复随机输入；
-- AES-128 和 SM4 分别循环 40 轮；
+- AES-128 和 SM4 的每个可用后端分别循环 40 轮；
 - 比较 ECB、CTR、GCM、XTS；
 - GCM 覆盖 96-bit 和非 96-bit IV；
 - XTS 覆盖整块和 CTS；
 - SM4-XTS 按 OpenSSL 的 GB tweak 约定比较。
 
-当前输出为 `PASS: 3360 OpenSSL 3.6 differential checks`。
+当前 x86 输出为 `PASS: 20160 OpenSSL 3.6 differential checks`；
+VSM4 后端因硬件不支持而明确跳过。
 
 ### 11.3 内存和未定义行为检查
 
@@ -446,8 +452,11 @@ GIFT-64 与 TWINE 没有套用 GCM/XTS，因为两者为 64-bit 分组，而标�
 - ARM AESE/AESD/TBL/SM4E/SM4EKEY；
 - PMULL 指令见证；实际 GHASH-PMULL 函数位于 `src/arm64/ghash_pmull.c`。
 
-x86 部分在当前 ARM 主机上完成交叉编译和反汇编。状态记录在
-[`results/summary/x86_status.json`](results/summary/x86_status.json)。由于没有对应 x86 目标机，项目不填写伪造的 x86 吞吐率和 cycles/byte。
+x86 部分除保留交叉编译和反汇编闸门外，还在 Intel Core i9-13900H 上完成
+原生执行。状态记录在
+[`results/summary/x86_status.json`](results/summary/x86_status.json)：
+AES-NI、VAES、SSSE3、GFNI、PCLMUL/VPCLMUL 均执行通过；VSM4 因 CPUID
+不支持而明确跳过，并保留实际函数的编译/反汇编证据。
 
 ## 13. 性能基准在哪里
 
@@ -482,6 +491,9 @@ x86 部分在当前 ARM 主机上完成交叉编译和反汇编。状态记录�
 
 - [`results/raw/native_samples.csv`](results/raw/native_samples.csv)：2610 条原始样本；
 - [`results/summary/native_summary.json`](results/summary/native_summary.json)：174 条汇总记录；
+- [`results/raw/x86_samples.csv`](results/raw/x86_samples.csv)：3240 条 x86 原始样本；
+- [`results/summary/x86_summary.json`](results/summary/x86_summary.json)：216 条
+  x86 汇总记录，包含 RDTSCP TSC ticks/byte；
 - [`results/summary/table_sizes.csv`](results/summary/table_sizes.csv)：表大小；
 - [`results/summary/object_sizes.csv`](results/summary/object_sizes.csv)：目标文件代码/数据大小。
 
@@ -509,6 +521,7 @@ x86 部分在当前 ARM 主机上完成交叉编译和反汇编。状态记录�
 make test            # 内部测试 + OpenSSL 差分
 make test-sanitize   # ASan + UBSan
 make check-x86       # x86 交叉编译和 ARM/x86 指令反汇编检查
+make validate-x86    # x86 原生正确性、sanitizer、ISA、基准与状态文件
 make bench           # 重跑基准并生成 CSV/JSON
 make report          # 重新生成图表、表格和最终 PDF
 make all             # 顺序执行上述全部验收
@@ -520,7 +533,9 @@ make all             # 顺序执行上述全部验收
 
 1. Apple M2 Pro 已原生运行参考、T-table、NEON TBL、AES 指令辅助 SM4、AESE/AESD 和 PMULL 路径。
 2. ARM SM4E/SM4EKEY 与 Intel VSM4 已写入真实后端并通过编译/反汇编检查；M2 Pro 不支持 SM4E，因此按设计跳过运行。
-3. x86 AES-NI/VAES、PSHUFB、GFNI、PCLMUL/VPCLMUL、VSM4 的实际函数均能生成目标指令；VPSHUFB 目前是 ISA 编译探针，实际 shuffle 内核使用 128-bit PSHUFB。本项目没有 x86 真机，所以不报告 x86 性能数据。
+3. x86 AES-NI/VAES、PSHUFB、GFNI、PCLMUL/VPCLMUL 已在 i9-13900H
+   原生执行并保存性能样本；VPSHUFB 仍是 ISA 编译探针，实际 shuffle 内核
+   使用 128-bit PSHUFB。VSM4 因本机不支持而只报告静态指令证据。
 4. T-table 是课程对比后端，存在秘密相关缓存访问风险；shuffle、bitslice 和硬件指令路径更适合讨论常量时间实现。
 5. 本项目是教学和实验代码，不是经过密码认证或侧信道认证的生产密码库。
 

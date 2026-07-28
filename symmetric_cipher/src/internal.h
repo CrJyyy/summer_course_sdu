@@ -118,8 +118,11 @@ void sc_x86_twine_crypt4_shuffle(const sc_twine_key *key,
                                   const uint8_t in[32], uint8_t out[32],
                                   int decrypt);
 uint8_t sc_sm4_gfni_scalar_model(uint8_t x);
+uint8_t sc_x86_sm4_gfni_sbox_byte(uint8_t x);
 int sc_arm_ghash_mul(uint8_t x[16], const uint8_t h[16]);
 int sc_x86_ghash_mul(uint8_t x[16], const uint8_t h[16]);
+int sc_x86_ghash_mul_pclmul(uint8_t x[16], const uint8_t h[16]);
+int sc_x86_ghash_mul_vpclmul(uint8_t x[16], const uint8_t h[16]);
 void sc_x86_sm4_encrypt_gfni(const sc_sm4_key *key, const uint8_t in[16],
                              uint8_t out[16]);
 void sc_x86_sm4_encrypt4_gfni(const sc_sm4_key *key, const uint8_t in[64],
