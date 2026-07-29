@@ -34,7 +34,7 @@
 ---
 ##  测试环境
 | 架构 | CPU | 编译器 | 操作系统 |
-|------|-----|------|--------|----------|
+|------|-----|------|--------|
 | x86-64 | AMD Ryzen 9 7945HX | GCC 11.4 | Ubuntu 22.04 |
 | ARM64 | Apple M2 Pro|Apple clang 17.0.0| macOS 15.6.1|
 
@@ -106,4 +106,4 @@ clang -O3 -o sm3_arm64 sm3_arm64.c
 
 完整的技术原理、架构级优化与详细数据分析，请参阅：
 
-**[REPORT.md](REPORT.md)**
+**[SM3_REPORT.md](SM3_REPORT.md)**
