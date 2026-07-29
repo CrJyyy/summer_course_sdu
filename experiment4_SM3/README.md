@@ -22,7 +22,7 @@
 │   └── sm3_x86.c               # x86-64 优化实现（AVX2 / AVX512 / Scalar 三路径）
 │   └── sm3_arm64.c             # ARM64 优化实现（NEON + GPR On-the-fly）
 ├── README.md                   # 项目简介与快速开始
-└── REPORT.md                   # 完整报告
+└── SM3_REPORT.md                   # 完整报告
 ```
 
 | 文件 | 作用 | 关键技术 |
@@ -98,7 +98,7 @@ clang -O3 -o sm3_arm64 sm3_arm64.c
 | **ARM64** | Baseline (Scalar) | ~163 |
 | **ARM64** | NEON+GPR Hybrid | ~252 |
 
-> **注**：若 x86 虚拟机未暴露 AVX2/AVX512，程序将自动回退到 Scalar 路径。详见 `REPORT.md` 的“已知问题”章节。
+> **注**：若 x86 虚拟机未暴露 AVX2/AVX512，程序将自动回退到 Scalar 路径。详见 `SM3_REPORT.md` 的“已知问题”章节。
 
 ---
 
