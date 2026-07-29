@@ -1,0 +1,20 @@
+system:
+  parallel_attempts: 1
+  parallel_requests: 1
+  narrow_output: false
+run:
+  seed: 20260725
+  generations: 1
+  deprefix: true
+plugins:
+  extended_detectors: false
+  generators:
+    huggingface:
+      Pipeline:
+        max_tokens: 128
+        hf_args:
+          torch_dtype: float16
+          device: cuda
+reporting:
+  report_dir: /home/prorice/claude-workspace/garak/evaluation/results
+  confidence_interval_method: none
