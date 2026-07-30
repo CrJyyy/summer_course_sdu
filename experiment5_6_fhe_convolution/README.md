@@ -27,7 +27,7 @@ tenseal>=0.3.0
 ### 1. 安装依赖
 
 ```bash
-cd experiment5_fhe_convolution
+cd experiment5_6_fhe_convolution
 pip install -r requirements.txt
 ```
 

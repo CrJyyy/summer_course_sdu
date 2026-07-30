@@ -10,7 +10,7 @@
 ├── tests/             # 单元测试
 ├── data/              # 一次实验的状态文件与原始链上字节
 ├── output/data/       # 可提交的结构化解析结果
-├── output/pdf/        # 最终课程报告 PDF
+├── output/pdf/        # 最终课程报告 PDF 与同内容 Markdown
 ├── report/            # LaTeX 源文件、截图和编译说明
 ├── .secrets/          # 本地私钥（禁止提交或截图）
 ├── .venv/             # Python 虚拟环境（可重新创建）
@@ -37,7 +37,7 @@
 | `data/raw/` | `transaction.hex`、`block.hex`、`public_testnet4_block.hex` | 实验交易、包含实验交易的最终区块，以及前期集成测试区块的原始序列化字节；它们是解析器的唯一输入。 |
 | `output/data/` | `generated_transaction.json`、`confirmed_transaction.json`、`confirmed_block.json`、`public_testnet4_block.json` | 可提交的交易/区块层级解析、哈希、金额、签名、Merkle root 和 PoW 验证结果。 |
 | `output/data/` | `*_bytes.csv` | 逐字节覆盖表；每行含 offset、原始 hex、8-bit 二进制、字段路径、端序、解码值和说明。 |
-| `output/pdf/` | `task1_testnet4_tx_block.pdf` | 最终课程提交版任务一报告。 |
+| `output/pdf/` | `task1_testnet4_tx_block.pdf`、`task1_testnet4_tx_block.md` | 最终课程提交版任务一报告；Markdown 版保留同一正文、公式、代码、表格、截图、流程图和参考文献。 |
 | `report/` | `task1.tex`、`BUILD.md` | 中文 LaTeX 报告源文件，以及 XeLaTeX/`latexmk` 编译与 PDF 检查命令。 |
 | `report/assets/` | `testnet4_*.png` | Faucet、广播、确认、余额和区块浏览器过程截图，仅包含公开链上信息。 |
 | `.secrets/` | `testnet4_wallet.json` | 本机私钥文件，权限为 `0600`；被 `.gitignore` 忽略，绝不能作为交付物。 |
@@ -98,3 +98,4 @@ python3 -m venv .venv
 - 验证：ECDSA、BIP143 sighash、TXID、WTXID、金额守恒、交易入块、Merkle root、PoW 均为 `true`
 - 单元测试：17/17 通过
 - 报告：`output/pdf/task1_testnet4_tx_block.pdf`
+- 同内容 Markdown：`output/pdf/task1_testnet4_tx_block.md`

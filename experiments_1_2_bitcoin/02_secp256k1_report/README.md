@@ -10,7 +10,7 @@
 ├── data/              # 上游研究案例清单
 ├── results/           # 可提交的原始证据、测量值和统计结果
 ├── report/            # LaTeX 报告源文件与编译说明
-├── output/pdf/        # 最终课程报告 PDF
+├── output/pdf/        # 最终课程报告 PDF 与同内容 Markdown
 ├── work/              # 下载的上游源码和本机构建树
 ├── .venv/             # Python/CMake/Ninja 虚拟环境
 ├── tmp/               # LaTeX 临时文件和逐页渲染结果
@@ -34,7 +34,7 @@
 | `results/raw/` | `configure_*.txt`、`build_*.txt`、`ctest_*.txt`、`bench_*.txt` | 保存每种版本和表大小的配置、编译、官方测试与 10 次 benchmark 原始终端输出；文件名编码版本、配置和运行序号。 |
 | `results/diffs/` | `*_log.txt`、`*_diffstat.txt` | 保存 Clang/GCC constant-time 修复、x86 汇编移除、固定基点乘法重构和默认 86 KiB 表等案例的固定提交日志与差异摘要。 |
 | `report/` | `task2.tex`、`BUILD.md` | 中文 LaTeX 报告源文件，以及 XeLaTeX/`latexmk` 编译和 PDF 逐页检查命令。 |
-| `output/pdf/` | `task2_secp256k1_report.pdf` | 最终课程提交版任务二报告。 |
+| `output/pdf/` | `task2_secp256k1_report.pdf`、`task2_secp256k1_report.md` | 最终课程提交版任务二报告；Markdown 版保留同一正文、公式、代码、表格、流程图和参考文献。 |
 | `work/secp256k1/` | 上游 Git 仓库镜像 | 用于获取固定 tag、commit 和差异证据，不是自行修改的项目源码。 |
 | `work/sources/` | `v0.3.0` 至 `v0.7.1` 的固定版本源码 | 各研究版本的独立工作树，供源码核对和构建使用。 |
 | `work/builds/` | `v0.3.0-default`、`v0.3.1-default`、`v0.3.2-default`，以及四个性能配置 | 七套本机 Release 构建目录；前三套验证安全修复前后版本，后四套用于性能 benchmark，其中动态库是 `library_sizes.csv` 的测量对象。 |
@@ -79,3 +79,4 @@ python3 -m venv .venv
 - 每组 2 次预热、10 次正式运行：`ecdsa_sign` median 分别为 28.4、27.8、25.2、24.6 microseconds。
 - 原始数据与汇总位于 `results/benchmark_runs.csv`、`results/benchmark_summary.csv` 和 `results/library_sizes.csv`。
 - 报告：`output/pdf/task2_secp256k1_report.pdf`。
+- 同内容 Markdown：`output/pdf/task2_secp256k1_report.md`。

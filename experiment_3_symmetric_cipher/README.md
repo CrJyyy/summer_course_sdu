@@ -37,7 +37,7 @@ Apple M2 Pro 与本次 x86 主机都不提供 SM4 专用指令，`sm4-hw` 会返
 ## 一键复现
 
 ```sh
-cd symmetric_cipher
+cd experiment_3_symmetric_cipher
 make test            # KAT、随机/边界测试、OpenSSL 3.6+ 差分
 make test-sanitize   # ASan + UBSan
 make check-x86       # x86 交叉编译、ARM/x86 指令反汇编闸门
